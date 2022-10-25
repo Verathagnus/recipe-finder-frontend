@@ -7,7 +7,7 @@ import x_mark from "/cross.svg";
 const index = () => {
   return (
     <Fragment>
-      
+      <p>Navbar</p>
       <Outlet />
     </Fragment>
   );

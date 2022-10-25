@@ -1,4 +1,4 @@
-import { RootState } from "./../index";
+import { RootState } from "../index";
 import {
   ActionReducerMapBuilder,
   createAsyncThunk,
@@ -7,7 +7,7 @@ import {
 import {
   getImagesList,
   deleteImage,
-} from "../../../routes/Gallery/server";
+} from "../../services/galleryService";
 
 // interface GalleryType {
 //   images: string;

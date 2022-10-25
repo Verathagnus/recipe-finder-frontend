@@ -1,18 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, TypedUseSelectorHook, useSelector } from 'react-redux';
-import careerReducer from './career/careerSlice';
-import galleryReducer from './gallery/gallerySlice';
-import eventReducer from './event/eventSlice';
-import bookingReducer from './booking/bookingSlice';
-import adminReducer from './admin/adminSlice';
+import galleryReducer from './gallerySlice';
+// import bookingReducer from './booking/bookingSlice';
+import adminReducer from './adminSlice';
 
 export const store = configureStore({
     reducer: {
-        career: careerReducer,
+        admin: adminReducer,
         gallery: galleryReducer,
-        event: eventReducer,
-        booking: bookingReducer,
-        admin: adminReducer
+        recipe: recipeReducer,
+        ingredient: ingredientReducer,
     }
 });
 

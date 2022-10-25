@@ -6,7 +6,7 @@ import galleryImage from "/gallery-icon.png";
 const Admin = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 m-10 justify-center">
-      <div className="max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 m-4">
+      <div className="max-w-sm bg-gray-200 rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-blue-700 m-4">
         <div className="flex justify-center items-center">
           <a className="p-4">
             <img
@@ -27,7 +27,7 @@ const Admin = () => {
           </p>
           <Link
             to="/admin/eventadmin"
-            className="inline-flex items-center py-2 px-3 text-xs sm:text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="inline-flex items-center py-2 px-3 text-xs sm:text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
           >
             Redirect
             <svg
@@ -46,7 +46,7 @@ const Admin = () => {
           </Link>
         </div>
       </div>
-      <div className="max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 m-4">
+      <div className="max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-blue-700 m-4">
         <div className="flex flex-col justify-center items-center">
           <a className="p-4">
             <img
@@ -67,7 +67,7 @@ const Admin = () => {
           </p>
           <Link
             to="/admin/galleryadmin"
-            className="inline-flex items-center py-2 px-3 text-xs sm:text-sm   text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="inline-flex items-center py-2 px-3 text-xs sm:text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
           >
             Redirect
             <svg

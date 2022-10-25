@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, Navigate, Outlet } from "react-router-dom";
 import { useAppDispatch } from "../store";
 import { signOut } from "../store/admin/adminSlice";
-import { VerifyJWT } from "./server";
+import { VerifyJWT } from "../../services/userService";
 
 const AdminNavbar = () => {
   const returnInitialsName = () => {
@@ -46,7 +46,7 @@ const AdminNavbar = () => {
         <div className="container flex flex-wrap justify-between items-center mx-auto">
           <Link to="/admin" className="flex justify-center items-center ">
             <img
-              src="/recipe-finder-logo.png"
+              src="/recipe-finder-icon.png"
               className="mr-3 sm:h-9 w-full max-h-[60px]"
               alt="Recipe Finder Logo"
             />
@@ -128,18 +128,18 @@ const AdminNavbar = () => {
               </li>
               <li>
                 <Link
-                  to="/admin/eventadmin"
+                  to="/admin/ingredientsadmin"
                   className="block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700 "
                 >
-                  Events
+                  Ingredients
                 </Link>
               </li>
               <li>
                 <Link
-                  to="/admin/careeradmin"
+                  to="/admin/recipesadmin"
                   className="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                 >
-                  Career
+                  Recipes
                 </Link>
               </li>
               <li>
@@ -150,14 +150,6 @@ const AdminNavbar = () => {
                   Gallery
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/admin/bookingadmin"
-                  className="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                >
-                  Booking
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
@@ -165,12 +157,14 @@ const AdminNavbar = () => {
           className={`${hiddenValCNUD} justify-between items-center sm:max-w-[250px] md:w-auto z-50 my-4 text-base bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 md:order-1 right-2 left-auto sm:absolute`}
         >
           <div className="py-3 px-4">
+            <Link to="/adminprofile">
             <span className="block text-sm text-gray-900 dark:text-white">
               {JSON.parse(sessionStorage.getItem("user") || "404").name}
             </span>
             <span className="block text-sm font-medium text-gray-500 truncate dark:text-gray-400">
               {JSON.parse(sessionStorage.getItem("user") || "404").email}
             </span>
+            </Link>
           </div>
           <ul className="py-1" aria-labelledby="user-menu-button">
             <li>

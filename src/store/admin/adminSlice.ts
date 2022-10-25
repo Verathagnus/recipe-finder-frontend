@@ -1,14 +1,15 @@
-import { RootState } from "./../index";
+import { RootState } from "./index";
 import {
   ActionReducerMapBuilder,
   createAsyncThunk,
   createSlice,
 } from "@reduxjs/toolkit";
-import { VerifyJWT, AdminLogin } from "../../AdminNavbar/server";
+import { VerifyJWT, AdminLogin } from "../services/userService";
 
 interface IAdminState {
   jwtToken: string;
   user: Object;
+  response: Boolean;
 }
 
 import FormData from "form-data";
@@ -41,6 +42,7 @@ export const loginAdminThunk = createAsyncThunk(
 const initialState = {
   jwtToken: "",
   user: {},
+  response: false,
 } as IAdminState;
 
 const adminSlice = createSlice({
@@ -68,6 +70,7 @@ const adminSlice = createSlice({
         console.log(action.payload);
         state.jwtToken = action.payload.token;
         state.user = action.payload.user;
+        state.response = action.payload.response;
         console.log(action.payload.user)
         sessionStorage.setItem("jwtToken", action.payload.token);
         sessionStorage.setItem("user", JSON.stringify(action.payload.user));
@@ -95,6 +98,7 @@ export const { clearJWTToken, clearUser, signOut } = adminSlice.actions;
 
 export const selectJWTToken = (state: RootState) => state.admin.jwtToken;
 export const selectUser = (state: RootState) => state.admin.user;
+export const selectResponse = (state: RootState) => state.admin.response;
 
 //default export
 

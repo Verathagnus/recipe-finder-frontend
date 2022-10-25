@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { sendMessageEmail } from "./service";
+import { sendMessageEmail } from "../../services/contactService";
 import {
   Formik,
   Form,

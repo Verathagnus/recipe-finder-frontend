@@ -11,6 +11,8 @@ import CareerAdmin from "./components/CareerAdmin";
 import Admin from "./routes/Admin";
 import AdminNavbar from "./components/AdminNavbar";
 import AdminLoginForm from "./components/AdminLoginForm";
+import Recipes from "./routes/Recipes";
+import Ingredients from "./routes/Ingredients";
 
 function App() {
   return (
@@ -19,7 +21,8 @@ function App() {
         <Route path="/" element={<Navbar />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
-          <Route path="career" element={<Career />} />
+          <Route path="recipes" element={<Recipes />} />
+          <Route path="ingredients" element={<Ingredients />} />
           <Route path="contact" element={<Contact />} />
           <Route path="gallery" element={<Gallery />} />
         </Route>
@@ -28,6 +31,8 @@ function App() {
           <Route index element={<Admin />} />
           <Route path="galleryadmin" element={<GalleryAdmin />} />
           <Route path="careeradmin" element={<CareerAdmin />} />
+          <Route path="recipesadmin" element={<RecipesAdmin />} />
+          <Route path="ingredientsadmin" element={<IngredientsAdmin />} />
         </Route>
       </Routes>
     </>
