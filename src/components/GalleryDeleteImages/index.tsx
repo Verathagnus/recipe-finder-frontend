@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { deleteImage, getImagesList } from "../../routes/Gallery/server";
-import { useAppDispatch, useAppSelector } from "../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import {
   deleteImageThunk,
   fetchImagesList,
   selectImagesList,
-} from "../store/gallery/gallerySlice";
+} from "../../store/gallery/gallerySlice";
 
 const GalleryDeleteImages = () => {
   const imagesList = useAppSelector(selectImagesList);
@@ -28,11 +28,10 @@ const GalleryDeleteImages = () => {
     <>
       <div
         id="gallery"
-        className=" px-10 w-[90%]  text-center mx-auto drop-shadow-lg pb-20 "
+        className="px-10  mx-auto drop-shadow-lg pb-20 flex flex-col  justify-center"
       >
-        <h2 className="flex-auto text-black font-bold text-6xl pt-10 pb-4 text-center">
-          Gallery Delete
-        </h2>
+        <h3 className="font-medium leading-tight text-3xl mt-0 mb-2 text-blue-600 pb-5">Gallery Delete</h3>
+        
         <div className="flex">
           <button
             className="max-h-10 px-6
@@ -60,7 +59,7 @@ const GalleryDeleteImages = () => {
         </div>
 
         <div className="flex flex-row justify-center">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 relative gap-x-4 gap-y-4 px-4 pt-5 sm:pt-5 text-black ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 relative gap-x-4 gap-y-4 px-4 pt-5 sm:pt-5 text-black w-[400px] sm:w-[500px] md:w-[900px]">
             {imagesList.map((imageName, idx) => (
               <div key={imageName.secure_url}>
                 <div className="ease-out duration-200  hover:cursor-pointer flex  justify-center items-center">

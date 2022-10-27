@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, TypedUseSelectorHook, useSelector } from 'react-redux';
-import galleryReducer from './gallerySlice';
+import galleryReducer from './gallery/gallerySlice';
 // import bookingReducer from './booking/bookingSlice';
-import adminReducer from './adminSlice';
+import adminReducer from './admin/adminSlice';
+import recipeReducer from './recipe/recipeSlice';
+import ingredientReducer from './ingredient/ingredientSlice';
 
 export const store = configureStore({
     reducer: {
@@ -12,7 +14,7 @@ export const store = configureStore({
         ingredient: ingredientReducer,
     }
 });
-
+ 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 export const useAppDispatch = () => useDispatch<typeof store.dispatch>()
 export type RootState = ReturnType<typeof store.getState>

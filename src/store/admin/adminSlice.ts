@@ -1,10 +1,10 @@
-import { RootState } from "./index";
+import { RootState } from "../index";
 import {
   ActionReducerMapBuilder,
   createAsyncThunk,
   createSlice,
 } from "@reduxjs/toolkit";
-import { VerifyJWT, AdminLogin } from "../services/userService";
+import { VerifyJWT, AdminLogin } from "../../services/userService";
 
 interface IAdminState {
   jwtToken: string;

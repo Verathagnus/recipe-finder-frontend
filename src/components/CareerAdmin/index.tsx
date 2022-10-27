@@ -1,16 +1,16 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { getAllResumeList } from "../../routes/Career/server";
-import { useAppDispatch, useAppSelector } from "../store";
-import { fetchResumes, selectResumes } from "../store/career/careerSlice";
+import { useAppDispatch, useAppSelector } from "../../store";
+// import { fetchResumes, selectResumes } from "../../store/career/careerSlice";
 import Table, { AvatarCell, DeleteResume, DownloadPDF, SelectColumnFilter, StatusPill } from "./table";
 
 const CareerAdmin = () => {
   // const [resumesList, setResumesList] = useState([]);
-  const resumesList = useAppSelector(selectResumes);
+  const resumesList = [{}];//useAppSelector(selectResumes);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchResumes());
+    // dispatch(fetchResumes());
     console.log(resumesList)
   }, []);
   const columns = React.useMemo(

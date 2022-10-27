@@ -24,3 +24,11 @@ export function AdminLogin(formData: any) {
     },
   });
 }
+
+export function UserProfilePic(formData: any) {
+  return axios.post(`${VITE_SERVERURL}/api/update-profile-pic`, formData, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}

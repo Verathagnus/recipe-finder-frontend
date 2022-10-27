@@ -1,8 +1,8 @@
 import react, { useState, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import FormData from "form-data";
-import { loginAdminThunk, selectResponse } from "../store/admin/adminSlice";
-import { VerifyJWT } from "../AdminNavbar/server";
+import { loginAdminThunk, selectResponse } from "../../store/admin/adminSlice";
+import { VerifyJWT } from "../../services/userService";
 import { Navigate } from "react-router-dom";
 
 const AdminLoginForm = () => {

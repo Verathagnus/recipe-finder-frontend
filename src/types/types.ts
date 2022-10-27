@@ -1,38 +1,88 @@
-export interface IUpdateTypeValue{
-    category: string ;  
-    type : string ; 
-    oldvalue : string ; 
-    newvalue : string ; 
+export interface IngredientGetBasicType {
+  _id: string;
+  name: string;
+  category: string;
+  ingredientText: string;
+  attachmentFlag: boolean;
+  uploadedIngredientImage: string;
+  uploadedIngredientImagePublicId: string;
 }
 
-export interface IDeleteType{
-    category: string; 
-    type : string;
+export interface IngredientNewPostType {
+  name: string;
+  category: string;
+  ingredientText: string;
+  attachmentFlag: boolean;
+  uploadedIngredientImage: string;
+  uploadedIngredientImagePublicId: string;
 }
 
-export interface IDeleteTypeValue {
-    category: string ; 
-    type : string ; 
-    value: string ; 
+export interface IngredientModifyPostType {
+  _id: string;
+  name: string;
+  category: string;
+  ingredientText: string;
+  attachmentFlag: boolean;
+  uploadedIngredientImage: string;
+  uploadedIngredientImagePublicId: string;
 }
 
-export interface IUpdateTypeName {
-    category: string; 
-    type: string;
-    newType : string;
+export interface IngredientGetType {
+  _id: string;
+  name: string;
+  category: string;
+  ingredientText: string;
+  attachmentFlag: boolean;
+  uploadedIngredientImage: string;
+  uploadedIngredientImagePublicId: string;
+  filter_plus: number;
+  filter_minus: number;
+  popularity: number;
 }
 
-export interface INewType {
-    category : string; 
-    type : string ; 
-    newvalue : string; 
+export interface IIngredientState {
+  ingredients: IngredientGetType[];
+  loading: string;
+  ingredientFound: IngredientGetType | {};
+  ingredientsCount: number;
 }
 
-export interface IPostBookignDimension {
-    type : string ; 
-    public_url : string; 
+export interface IRecipeState {
+  recipes: RecipeGetType[];
+  loading: string;
+  recipeFound: RecipeGetType | {};
+  recipesCount: number;
+}
+export interface RecipeGetType {
+  _id: string;
+  name: string;
+  timeToCook: string;
+  ingredientsRequired: IngredientGetBasicType[];
+  recipeText: string;
+  uploadedRecipeImageFlag: boolean;
+  uploadedRecipeImageFileName: string;
+  uploadedRecipeImageFileNamePublicId: string;
+  dateUploaded: Date;
+  views: number;
 }
 
-export interface IGetBookingDimension{
-    type : string;
+export interface RecipeNewPostType {
+  name: string;
+  timeToCook: string;
+  ingredientsRequired: string[];
+  recipeText: string;
+  uploadedRecipeImageFlag: boolean;
+  uploadedRecipeImageFileName: string;
+  uploadedRecipeImageFileNamePublicId: string;
+}
+
+export interface RecipeModifyPostType {
+  _id: string;
+  name: string;
+  timeToCook: string;
+  ingredientsRequired: string[];
+  recipeText: string;
+  uploadedRecipeImageFlag: boolean;
+  uploadedRecipeImageFileName: string;
+  uploadedRecipeImageFileNamePublicId: string;
 }

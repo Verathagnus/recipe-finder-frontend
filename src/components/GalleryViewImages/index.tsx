@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { getImagesList } from "../../routes/Gallery/server";
-import { useAppDispatch, useAppSelector } from "../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import {
   fetchImagesList,
   selectImagesList,
   selectLoading
-} from "../store/gallery/gallerySlice";
+} from "../../store/gallery/gallerySlice";
 
 const GalleryViewImages = () => {
   const imagesList = useAppSelector(selectImagesList);
@@ -25,9 +25,9 @@ const GalleryViewImages = () => {
         id="gallery"
         className=" px-10 w-[90%]  text-center mx-auto drop-shadow-lg pb-20 "
       >
-        <h2 className="text-black font-bold text-6xl pt-10 pb-4 text-center">
-          Gallery
-        </h2>
+        <h3 className="font-medium text-left leading-tight text-3xl mt-0 mb-2 text-red-600 pb-5 pt-10">
+        Gallery
+        </h3>
         <div className="flex flex-row justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 relative gap-x-4 gap-y-4 px-4 pt-5 sm:pt-5 text-black ">
           

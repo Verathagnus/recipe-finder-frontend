@@ -17,8 +17,8 @@ import { Button, PageButton } from "./shared/Button";
 import { classNames } from "./shared/Utils";
 import { SortIcon, SortUpIcon, SortDownIcon } from "./shared/Icons";
 import { deleteResume } from "../../routes/Career/server";
-import { useAppDispatch } from "../store";
-import { deleteResumeThunk } from "../store/career/careerSlice";
+import { useAppDispatch } from "../../store";
+// import { deleteResumeThunk } from "../store/career/careerSlice";
 
 // Define a default UI for filtering
 function GlobalFilter({
@@ -155,7 +155,9 @@ export function DeleteResume({ value, data }: any) {
         "bg-red-100 text-red-800"
       )}
     >
-      <button type="button" onClick={() => dispatch(deleteResumeThunk(value))}>
+      <button type="button"
+      //  onClick={() => dispatch(deleteResumeThunk(value))}
+       >
         Delete
       </button>
     </span>

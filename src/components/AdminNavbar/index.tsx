@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, Navigate, Outlet } from "react-router-dom";
-import { useAppDispatch } from "../store";
-import { signOut } from "../store/admin/adminSlice";
+import { useAppDispatch } from "../../store";
+import { signOut } from "../../store/admin/adminSlice";
 import { VerifyJWT } from "../../services/userService";
 
 const AdminNavbar = () => {
@@ -11,7 +11,7 @@ const AdminNavbar = () => {
       sessionStorage.getItem("user") !== ""
     ) {
       const name = JSON.parse(
-        sessionStorage.getItem("user") || JSON.stringify({"name": "404"})
+        sessionStorage.getItem("user") || JSON.stringify({ name: "404" })
       ).name.split(" ");
       return name.reduce((acc: string, current: string) => {
         return acc + current[0];
@@ -19,6 +19,25 @@ const AdminNavbar = () => {
     }
     return "404";
   };
+
+  const returnAdminPic = () => {
+    if (
+      sessionStorage.getItem("user") ||
+      sessionStorage.getItem("user") !== ""
+    ) {
+      const name = JSON.parse(
+        sessionStorage.getItem("user") || JSON.stringify({ name: "404" })
+      ).name.split(" ");
+      // console.log( JSON.parse(
+      //   sessionStorage.getItem("user") || JSON.stringify({ name: "404" })
+      // ).profilePicSecureUrl)
+      return JSON.parse(
+        sessionStorage.getItem("user") || JSON.stringify({ name: "404" })
+      ).profilePicSecureUrl;
+    }
+    return false;
+  };
+
   const [hiddenValCN, setHiddenValCN] = useState("hidden");
   const [hiddenValCNUD, setHiddenValCNUD] = useState("hidden");
   const [navRdtLogin, setNavRdtLogin] = useState(false);
@@ -34,8 +53,7 @@ const AdminNavbar = () => {
           setNavRdtLogin(true);
         }
       });
-    }
-    else{
+    } else {
       setNavRdtLogin(true);
     }
   }, []);
@@ -58,7 +76,7 @@ const AdminNavbar = () => {
             <Link to="/">
               <button
                 type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-red-500 dark:hover:bg-red-700 dark:focus:ring-red-800"
               >
                 Main Site
               </button>
@@ -104,9 +122,14 @@ const AdminNavbar = () => {
                   }}
                 >
                   <span className="sr-only">Open user menu</span>
-                  <div className="font-bold text-gray-200 rounded-full bg-teal-600 flex items-center justify-center font-mono focus:ring-4 focus:ring-teal-200 dark:focus:ring-teal-300">
-                    {returnInitialsName()}
-                  </div>
+                  {returnAdminPic() && (
+                    <img className="font-bold text-gray-200 rounded-full bg-teal-600 flex items-center justify-center font-mono focus:ring-4 focus:ring-teal-200 dark:focus:ring-teal-300" src={returnAdminPic()} alt={returnInitialsName()} />
+                  )}
+                  {returnAdminPic() === false && (
+                    <div className="font-bold text-gray-200 rounded-full bg-teal-600 flex items-center justify-center font-mono focus:ring-4 focus:ring-teal-200 dark:focus:ring-teal-300">
+                      {returnInitialsName()}
+                    </div>
+                  )}
                 </button>
               </div>
             )}
@@ -120,7 +143,7 @@ const AdminNavbar = () => {
               <li>
                 <Link
                   to="/admin"
-                  className="block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white"
+                  className="block py-2 pr-4 pl-3 text-white bg-red-700 rounded md:bg-transparent md:text-red-700 hover:text-teal-600 md:p-0 dark:text-white"
                   aria-current="page"
                 >
                   Admin Home
@@ -157,13 +180,13 @@ const AdminNavbar = () => {
           className={`${hiddenValCNUD} justify-between items-center sm:max-w-[250px] md:w-auto z-50 my-4 text-base bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 md:order-1 right-2 left-auto sm:absolute`}
         >
           <div className="py-3 px-4">
-            <Link to="/adminprofile">
-            <span className="block text-sm text-gray-900 dark:text-white">
-              {JSON.parse(sessionStorage.getItem("user") || "404").name}
-            </span>
-            <span className="block text-sm font-medium text-gray-500 truncate dark:text-gray-400">
-              {JSON.parse(sessionStorage.getItem("user") || "404").email}
-            </span>
+            <Link to="/admin/adminprofile" className="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+              <span className="block text-sm text-gray-900 dark:text-white">
+                {JSON.parse(sessionStorage.getItem("user") || "404").name}
+              </span>
+              <span className="block text-sm font-medium text-gray-500 truncate dark:text-gray-400">
+                {JSON.parse(sessionStorage.getItem("user") || "404").email}
+              </span>
             </Link>
           </div>
           <ul className="py-1" aria-labelledby="user-menu-button">
@@ -184,7 +207,10 @@ const AdminNavbar = () => {
               <a
                 href="#"
                 className="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                onClick={() => {dispatch(signOut({}));setNavRdtLogin(true)}}
+                onClick={() => {
+                  dispatch(signOut({}));
+                  setNavRdtLogin(true);
+                }}
               >
                 Sign out
               </a>
