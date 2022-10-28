@@ -31,9 +31,9 @@ const GalleryViewImages = () => {
         <div className="flex flex-row justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 relative gap-x-4 gap-y-4 px-4 pt-5 sm:pt-5 text-black ">
           
-            {/* {
+            {
             
-            (loading =='idle' || loading =='pending')? "" : imagesList && imagesList.map((imageName, idx) => (
+            !(Array.isArray(imagesList) && imagesList.length > 0) ? "" : imagesList && imagesList.map((imageName, idx) => (
               <div
                 key={imageName.secure_url}
                 className="ease-out duration-200  hover:cursor-pointer flex  justify-center items-center"
@@ -43,14 +43,14 @@ const GalleryViewImages = () => {
                     onClick={() => onClickHandler(idx)}
                     data-bs-toggle="modal"
                     data-bs-target="#exampleModalCenter"
-                    className="hover:opacity-80 block object-cover  w-[340px] h-[340px]  md:h-[500px] md:w-[500px] rounded-lg shadow-2xl"
+                    className="hover:opacity-80 block object-cover  w-[340px]  md:h-[300px] md:w-[500px] rounded-lg shadow-2xl"
                     key={imageName.secure_url}
                     src={imageName.secure_url}
                     alt={imageName.secure_url}
                   />
                 </div>
               </div>
-            ))} */}
+            ))}
           </div>
         </div>
       </div>
