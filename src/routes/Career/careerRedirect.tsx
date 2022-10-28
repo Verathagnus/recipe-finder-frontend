@@ -10,8 +10,8 @@ import {
 import axios from "axios";
 import { getCareerUploadSign, uploadResume } from "./server";
 import FormData from "form-data";
-import { useAppDispatch } from "../../components/store";
-import { submitResumeThunk } from "../../components/store/career/careerSlice";
+import { useAppDispatch } from "../../store";
+// import { submitResumeThunk } from "../../store/career/careerSlice";
 import { useNavigate } from "react-router-dom";
 
 const styles = {
@@ -160,7 +160,7 @@ const CareerRedirect = ({ setClassNameHidden }: any) => {
       resumeData.uploadedResumefileNamePublicId
     );
     console.log(resumeData);
-    dispatch(submitResumeThunk(newData));
+    // dispatch(submitResumeThunk(newData));
     setClassNameHidden(true);
   };
   const formInitialValues = {

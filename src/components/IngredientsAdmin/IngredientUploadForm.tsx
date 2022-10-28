@@ -154,7 +154,7 @@ const IngredientForm = () => {
     newData.append("uploadedIngredientPublic", resumeData.uploadedIngredientPublic);
     
     dispatch(
-      submitIngredientThunk({ newData, attachmentFlag: resumeData.attachmentFlag })
+      submitIngredientThunk(newData)
     ).then(() =>
       setTimeout(() => {
         navigate("/admin/ingredientadmin");
@@ -348,7 +348,7 @@ const IngredientForm = () => {
                   <button
                     id="ingredient_upload_widget"
                     className={`${styles.field}`}
-                    onClick={(e) => {e.pringredientDefault();IngredientUpload();}}
+                    onClick={(e) => {e.preventDefault(); IngredientUpload();}}
                   >
                     Upload
                   </button>
