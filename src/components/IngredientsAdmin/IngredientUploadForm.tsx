@@ -8,13 +8,13 @@ import {
   useFormikContext,
 } from "formik";
 import FormData from "form-data";
-import { useAppDispatch } from "../store";
-import { submitEventThunk } from "../store/event/eventSlice";
+import { useAppDispatch } from "../../store";
+import { submitIngredientThunk } from "../../store/ingredient/ingredientSlice";
 import DateView from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
 import { Cloudinary } from "@cloudinary/url-gen/instance/Cloudinary";
-import { getEventUploadSign } from "../../routes/Events/server";
+import { getIngredientImageUploadSign } from "../../services/ingredientService";
 function DatePicker(props: any) {
   const { label, name, ...rest } = props;
   return (
@@ -51,16 +51,16 @@ const styles = {
   errorMsg: "text-red-500 text-sm",
   checkboxLabel: "text-gray-700 text-sm font-bold pt-2 pb-1 pl-2",
 };
-const EventForm = () => {
+const IngredientForm = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   // const onClickHandler = ()=>{
   //   alert('clicked');
   // }
-  const [eventUploadedFilename, setEventUploadedFilename] = useState("");
-  const [eventUploadedFilenamePublic, setEventUploadedFilenamePublic] = useState("");
+  const [ingredientUploadedFilename, setIngredientUploadedFilename] = useState("");
+  const [ingredientUploadedFilenamePublic, setIngredientUploadedFilenamePublic] = useState("");
   const cloudName = `${import.meta.env.VITE_CLOUD_NAME}`; // replace with your own cloud name
-  const uploadPreset = "event_attachments"; // replace with your own upload preset
+  const uploadPreset = "ingredient_attachments"; // replace with your own upload preset
   const api_key = import.meta.env.VITE_CLOUDINARY_API_KEY;
   // Remove the comments from the code below to add
   // additional functionality.
@@ -68,8 +68,8 @@ const EventForm = () => {
   // the full list of possible parameters that you
   // can add see:
   //   https://cloudinary.com/documentation/upload_widget_reference
-  const EventUpload = async () => {
-    const res = await getEventUploadSign();
+  const IngredientUpload = async () => {
+    const res = await getIngredientImageUploadSign();
     console.log(res);
     var myWidget = window.cloudinary.openUploadWidget(
       {
@@ -82,8 +82,8 @@ const EventForm = () => {
         // showAdvancedOptions: true,  //add advanced options (public_id and tag)
         // sources: [ "local", "url"], // restrict the upload sources to URL and local files
         multiple: false, //restrict upload to a single file
-        // folder: "event_attachments", //upload files to the specified folder
-        tags: ["events"], //add the given tags to the uploaded files
+        // folder: "ingredient_attachments", //upload files to the specified folder
+        tags: ["ingredients"], //add the given tags to the uploaded files
         apiKey: api_key,
 
         // context: {alt: "user_uploaded"}, //add the given context data to the uploaded files
@@ -117,10 +117,10 @@ const EventForm = () => {
       }
       },
       (error: any, result: any) => {
-        if (!error && result && result.event === "success") {
+        if (!error && result && result.ingredient === "success") {
           console.log("Done! Here is the file info: ", result.info);
-          setEventUploadedFilename(result.info.secure_url);
-          setEventUploadedFilenamePublic(result.info.public_id);
+          setIngredientUploadedFilename(result.info.secure_url);
+          setIngredientUploadedFilenamePublic(result.info.public_id);
         }
       }
     );
@@ -128,7 +128,7 @@ const EventForm = () => {
   };
 
   // useEffect(() => {
-  //   document.getElementById("event_upload_widget").addEventListener(
+  //   document.getElementById("ingredient_upload_widget").addIngredientListener(
   //     "click",
   //     function () {
   //       //myWidget.open();
@@ -143,21 +143,21 @@ const EventForm = () => {
     });
     return file;
   }
-  const submitEvent = (resumeData: any) => {
+  const submitIngredient = (resumeData: any) => {
     var newData = new FormData();
     newData.append("title", resumeData.title);
     newData.append("date", resumeData.date);
     newData.append("summary", resumeData.summary);
     newData.append("description", resumeData.description);
     newData.append("attachmentFlag", resumeData.attachmentFlag);
-    newData.append("uploadedEvent", resumeData.uploadedEvent);
-    newData.append("uploadedEventPublic", resumeData.uploadedEventPublic);
+    newData.append("uploadedIngredient", resumeData.uploadedIngredient);
+    newData.append("uploadedIngredientPublic", resumeData.uploadedIngredientPublic);
     
     dispatch(
-      submitEventThunk({ newData, attachmentFlag: resumeData.attachmentFlag })
+      submitIngredientThunk({ newData, attachmentFlag: resumeData.attachmentFlag })
     ).then(() =>
       setTimeout(() => {
-        navigate("/admin/eventadmin");
+        navigate("/admin/ingredientadmin");
       }, 1000)
     );
   };
@@ -167,7 +167,7 @@ const EventForm = () => {
     summary: "",
     description: "",
     attachmentFlag: false,
-    uploadedEvent: File,
+    uploadedIngredient: File,
   };
   return (
     <>
@@ -200,13 +200,13 @@ const EventForm = () => {
             // }
             if (
               values.attachmentFlag &&
-              (!values.uploadedEvent ||
-                values.uploadedEvent === null ||
-                document.getElementById("uploadedEvent") !== null)
+              (!values.uploadedIngredient ||
+                values.uploadedIngredient === null ||
+                document.getElementById("uploadedIngredient") !== null)
             ) {
               {
-                console.log(values.uploadedEvent);
-                errors.uploadedEvent = "Email is Required";
+                console.log(values.uploadedIngredient);
+                errors.uploadedIngredient = "Email is Required";
               }
             }
 
@@ -217,33 +217,33 @@ const EventForm = () => {
             console.log(values);
 
             if (!values.attachmentFlag) {
-              submitEvent({
+              submitIngredient({
                 ...values,
                 attachmentFlag: false,
-                uploadedEvent: "",
-                uploadedEventPublic: "",
+                uploadedIngredient: "",
+                uploadedIngredientPublic: "",
               });
             } 
-            else if(eventUploadedFilename === ""){
+            else if(ingredientUploadedFilename === ""){
               setSubmitting(true);
             }
             else {
               
-              // const parts = values.uploadedEvent.name.split(".");
-              // const ext = values.uploadedEvent.name.slice(
-              //   values.uploadedEvent.name.length -
+              // const parts = values.uploadedIngredient.name.split(".");
+              // const ext = values.uploadedIngredient.name.slice(
+              //   values.uploadedIngredient.name.length -
               //     parts[parts.length - 1].length
               // );
-              // const name = values.uploadedEvent.name.slice(
+              // const name = values.uploadedIngredient.name.slice(
               //   0,
-              //   values.uploadedEvent.name.length - ext.length - 1
+              //   values.uploadedIngredient.name.length - ext.length - 1
               // );
               // const newName = Date.now() + "-" + name + "." + ext;
-              submitEvent({
+              submitIngredient({
                 ...values,
                 attachmentFlag: true,
-                uploadedEvent: eventUploadedFilename,
-                uploadedEventPublic: eventUploadedFilenamePublic,
+                uploadedIngredient: ingredientUploadedFilename,
+                uploadedIngredientPublic: ingredientUploadedFilenamePublic,
               });
             }
           }}
@@ -335,7 +335,7 @@ const EventForm = () => {
                     type="checkbox"
                     name="attachmentFlag"
                   />
-                  <span className={styles.checkboxLabel}>Upload Event</span>
+                  <span className={styles.checkboxLabel}>Upload Ingredient</span>
                 </label>
                 <ErrorMessage
                   name="summary"
@@ -346,43 +346,43 @@ const EventForm = () => {
               {values.attachmentFlag && (
                 <div className="form-group row py-sm-2 px-sm-3">
                   <button
-                    id="event_upload_widget"
+                    id="ingredient_upload_widget"
                     className={`${styles.field}`}
-                    onClick={(e) => {e.preventDefault();EventUpload();}}
+                    onClick={(e) => {e.pringredientDefault();IngredientUpload();}}
                   >
                     Upload
                   </button>
                   <label className={`${styles.label} font-normal`}>
                     
-                    {eventUploadedFilename !== "" && <p>File uploaded at <a className="font-bold text-blue-500" href={eventUploadedFilename}>{eventUploadedFilename}</a></p>}
+                    {ingredientUploadedFilename !== "" && <p>File uploaded at <a className="font-bold text-blue-500" href={ingredientUploadedFilename}>{ingredientUploadedFilename}</a></p>}
                   </label>
-                  {/* <EventUploadWidget
+                  {/* <IngredientUploadWidget
                     classNameProp={`${styles.field} ${
-                      touched.uploadedEvent && errors.uploadedEvent
+                      touched.uploadedIngredient && errors.uploadedIngredient
                         ? "is-invalid"
                         : ""
                     } `}
-                    setEventUploadedFilename={setEventUploadedFilename}
+                    setIngredientUploadedFilename={setIngredientUploadedFilename}
                   /> */}
 
                   {/* <input
-                    id="uploadedEvent"
-                    name="uploadedEvent"
+                    id="uploadedIngredient"
+                    name="uploadedIngredient"
                     type="file"
-                    onChange={(event) => {
+                    onChange={(ingredient) => {
                       setFieldValue(
-                        "uploadedEvent",
-                        event.currentTarget.files![0]
+                        "uploadedIngredient",
+                        ingredient.currentTarget.files![0]
                       );
                     }}
                     className={`${styles.field} ${
-                      touched.uploadedEvent && errors.uploadedEvent
+                      touched.uploadedIngredient && errors.uploadedIngredient
                         ? "is-invalid"
                         : ""
                     } `}
                   /> */}
                   <ErrorMessage
-                    name="uploadedEvent"
+                    name="uploadedIngredient"
                     component="div"
                     className={styles.errorMsg}
                   />
@@ -449,4 +449,4 @@ const EventForm = () => {
   );
 };
 
-export default EventForm;
+export default IngredientForm;

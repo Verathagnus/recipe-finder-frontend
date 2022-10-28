@@ -36,8 +36,7 @@ const AdminLoginForm = () => {
         sessionStorage.getItem("jwtToken"),
         sessionStorage.getItem("user")
       );
-      if(responseFromLogin)
-      setNavRdt(true);
+      if (responseFromLogin) setNavRdt(true);
     });
   };
 
@@ -67,12 +66,13 @@ const AdminLoginForm = () => {
                   <div className="md:p-12 md:mx-6">
                     <div className="text-center">
                       <img
-                        className="mx-auto w-48 -mb-10"
-                        src="recipe_finder_logo.png"
+                        src="/recipe-finder-icon.png"
+                        className="mx-auto w-48"
                         alt="logo"
                       />
-                      <h4 className="text-xl font-semibold mt-1 mb-6 pb-1">
-                        Recipe Finder Admin Login
+                      
+                      <h4 className="text-2xl font-bold mt-1 mb-6 pb-1 text-red-600">
+                        Admin Login
                       </h4>
                     </div>
                     <form onSubmit={submitHandler}>
@@ -150,7 +150,7 @@ const AdminLoginForm = () => {
                           data-mdb-ripple-color="light"
                           style={{
                             background:
-                              "linear-gradient(to right, #006bce, #00716d, #007700)",
+                              "linear-gradient(to right,  #fc9471, #ccbe1d, #9bb4ec, #2af)",
                           }}
                         >
                           Log in
@@ -163,7 +163,7 @@ const AdminLoginForm = () => {
                   className="lg:w-6/12 flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none"
                   style={{
                     background:
-                      "linear-gradient(to right, #006bce, #00716d, #007700)",
+                      "linear-gradient(to right,  #fc9471, #ccbe1d, #9bb4ec, #2af)",
                   }}
                 >
                   <div className="text-white px-4 py-6 md:p-12 md:mx-6">

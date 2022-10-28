@@ -16,8 +16,8 @@ import {
 import { Button, PageButton } from "./shared/Button";
 import { classNames } from "./shared/Utils";
 import { SortIcon, SortUpIcon, SortDownIcon } from "./shared/Icons";
-import { useAppDispatch } from "../store";
-import { deleteEventThunk } from "../store/event/eventSlice";
+import { useAppDispatch } from "../../store";
+import { deleteIngredientThunk } from "../../store/ingredient/ingredientSlice";
 
 // Define a default UI for filtering
 function GlobalFilter({
@@ -110,14 +110,14 @@ export function SelectDateFilter({
   const options = React.useMemo(() => {
     const options = new Set();
     preFilteredRows.forEach((row: any) => {
-      options.add(new Date(row.values[id]).toLocaleDateString());
+      options.add(row.values[id]);
     });
     return [...options.values()];
   }, [id, preFilteredRows]);
 
   // Render a multi-select box
   return (
-    <label className="flex gap-x-2 items-baseline w-32">
+    <label className="flex gap-x-2 items-baseline w-auto">
       <span className="text-gray-700">{render("Header")}: </span>
       <select
         className="form-select appearance-none
@@ -153,7 +153,7 @@ export function SelectDateFilter({
   );
 }
 
-export function StatusPill({ value }:any) {
+export function StatusPill({ value }: any) {
   const status = value ? value.toLowerCase() : "unknown";
 
   return (
@@ -170,41 +170,75 @@ export function StatusPill({ value }:any) {
   );
 }
 
-export function DateCell({ value }:any) {
-
+export function DateCell({ value }: any) {
   return (
     <span
-      className={classNames(
-        "px-3 py-1 leading-wide rounded-full shadow-sm"
-      )}
+      className={classNames("px-3 py-1 leading-wide rounded-full shadow-sm")}
     >
       {new Date(value).toLocaleDateString()}
     </span>
   );
 }
 
-export function DownloadPDFEvent({ value, column, row }:any) {
-  if(row.original[column.flagAccessor])
+export function CategoryCell({ value, column, row }: any) {
+  return (
+    <>
+      {value === "Veg" ? (
+        <span className="px-3 py-1 uppercase leading-wide font-bold text-xs rounded-full shadow-sm text-teal-700 bg-teal-100">
+          <a>{value}</a>
+        </span>
+      ) : (
+        <span className="px-3 py-1 uppercase leading-wide font-bold text-xs rounded-full shadow-sm text-red-700 bg-red-100">
+          {value}
+        </span>
+      )}
+    </>
+  );
+}
+
+export function DownloadPDFIngredient({ value, column, row }: any) {
+  if (value && row.original[column.flagAccessor])
+    return (
+      <span className="flex flex-row w-full items-center">
+        <a href={value} className="w-auto">
+          <img src={value} className="w-10 h-10 rounded-sm mr-5" />
+        </a>
+        <span
+          className={classNames(
+            "px-3 py-1 uppercase leading-wide font-bold text-xs rounded-full shadow-sm",
+            "bg-green-100 text-green-800"
+          )}
+        >
+          <a href={value}>
+            {value.split("ingredient/")[1] ||
+              value.replace("https://res.cloudinary.com/dxgfvidct/image/upload/", "").slice(0, 20)}
+          </a>
+        </span>
+      </span>
+    );
+  return <></>;
+}
+export function EditIngredient({ value, column, row }: any) {
+  const dispatch = useAppDispatch();
   return (
     <span
       className={classNames(
         "px-3 py-1 uppercase leading-wide font-bold text-xs rounded-full shadow-sm",
-        "bg-green-100 text-green-800"
+        "bg-blue-100 text-blue-600"
       )}
     >
-      <a
-        href={value}
+      <button
+        type="button"
+        onClick={() => {
+          console.log("Edit MOdal", row.original[column.editAccessor]);
+        }}
       >
-        {value.split("event_attachments/")[1]}
-      </a>
+        Edit
+      </button>
     </span>
   );
-  return (<>
-  
-  </>);
 }
-
-export function DeleteEvent({ value, data }:any) {
+export function DeleteIngredient({ value, data }: any) {
   const dispatch = useAppDispatch();
   return (
     <span
@@ -214,16 +248,15 @@ export function DeleteEvent({ value, data }:any) {
       )}
     >
       <button
-                  type="button"
-                  
-          onClick={() => dispatch(deleteEventThunk(value))}
-                >
-                  Delete
-                </button>
+        type="button"
+        onClick={() => dispatch(deleteIngredientThunk(value))}
+      >
+        Delete
+      </button>
     </span>
   );
 }
-export function AvatarCell({ value, column, row }:any) {
+export function AvatarCell({ value, column, row }: any) {
   return (
     <div className="flex items-center">
       {/* <div className="flex-shrink-0 h-10 w-10">
@@ -234,7 +267,9 @@ export function AvatarCell({ value, column, row }:any) {
         />
       </div> */}
       <div className="ml-4">
-        <div className="text-sm font-medium text-gray-900">{value} {row.original[column.lNameAccessor]}</div>
+        <div className="text-sm font-medium text-gray-900">
+          {value} {row.original[column.lNameAccessor]}
+        </div>
         {/* <div className="text-sm text-gray-500">
           {row.original[column.emailAccessor]}
         </div> */}
@@ -243,7 +278,7 @@ export function AvatarCell({ value, column, row }:any) {
   );
 }
 
-function Table({ columns, data }:any) {
+function Table({ columns, data }: any) {
   // Use the state and functions returned from useTable to build your UI
   const {
     getTableProps,
@@ -279,7 +314,7 @@ function Table({ columns, data }:any) {
 
   // Render the UI for your table
   return (
-    <>
+    <div className="max-w-[1180px] mx-auto relative">
       <div className="sm:flex sm:gap-x-2">
         <GlobalFilter
           preGlobalFilteredRows={preGlobalFilteredRows}
@@ -303,9 +338,9 @@ function Table({ columns, data }:any) {
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
               <table
                 {...getTableProps()}
-                className="min-w-full divide-y divide-gray-200"
+                className="min-w-full divide-y divide-gray-200 border shadow-md"
               >
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-100">
                   {headerGroups.map((headerGroup: any) => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
                       {headerGroup.headers.map((column: any) => (
@@ -342,7 +377,7 @@ function Table({ columns, data }:any) {
                   {...getTableBodyProps()}
                   className="bg-white divide-y divide-gray-200"
                 >
-                  {page.map((row: any) => {
+                  {page.map((row: any, i: number) => {
                     // new
                     prepareRow(row);
                     return (
@@ -395,8 +430,8 @@ function Table({ columns, data }:any) {
                 className="form-select appearance-none
                 block
                 w-full
-                px-3
-                py-1.5
+                px-2
+                py-1
                 text-base
                 font-normal
                 text-gray-700
@@ -418,8 +453,8 @@ function Table({ columns, data }:any) {
                   </option>
                 ))}
                 <option key="All" value={data.length}>
-                    Show All
-                  </option>
+                  Show All
+                </option>
               </select>
             </label>
           </div>
@@ -471,8 +506,7 @@ function Table({ columns, data }:any) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
-
 export default Table;

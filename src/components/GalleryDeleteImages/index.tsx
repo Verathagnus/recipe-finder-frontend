@@ -28,13 +28,13 @@ const GalleryDeleteImages = () => {
     <>
       <div
         id="gallery"
-        className="px-10  mx-auto drop-shadow-lg pb-20 flex flex-col  justify-center"
+        className="mx-auto drop-shadow-lg pb-20 flex flex-col"
       >
-        <h3 className="font-medium leading-tight text-3xl mt-0 mb-2 text-blue-600 pb-5">Gallery Delete</h3>
+        <h3 className="font-medium text-left leading-tight text-3xl mt-0 mb-2 text-red-600 pb-5">Gallery Delete</h3>
         
-        <div className="flex">
+        <div className="flex flex-row justify-start items-start">
           <button
-            className="max-h-10 px-6
+            className="ml-1 max-h-10 px-6
         py-2.5
         bg-teal-600
         text-white
@@ -49,8 +49,7 @@ const GalleryDeleteImages = () => {
         active:bg-teal-800 active:shadow-lg
         transition
         duration-150
-        ease-in-out
-        ml-10 top-0"
+        ease-in-out"
             type="button"
             onClick={() => dispatch(fetchImagesList()).then(() => console.log(imagesList))}
           >
@@ -59,7 +58,7 @@ const GalleryDeleteImages = () => {
         </div>
 
         <div className="flex flex-row justify-center">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 relative gap-x-4 gap-y-4 px-4 pt-5 sm:pt-5 text-black w-[400px] sm:w-[500px] md:w-[900px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2  relative gap-x-4 gap-y-4 pt-5 lg:grid-cols-3 lg:gap-3 sm:pt-5 text-black w-[400px] sm:w-[500px] md:w-[900px]">
             {imagesList.map((imageName, idx) => (
               <div key={imageName.secure_url}>
                 <div className="ease-out duration-200  hover:cursor-pointer flex  justify-center items-center">

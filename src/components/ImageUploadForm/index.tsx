@@ -84,8 +84,7 @@ const ImageUploadForm = () => {
   };
   return (
     <div className="px-10  mx-auto drop-shadow-lg pb-20 flex flex-col justify-center">
-     
-      <h3 className="font-medium leading-tight text-3xl mt-0 mb-2 text-blue-600 py-10">Gallery Upload</h3>
+      <h3 className="font-medium leading-tight text-3xl mt-0 mb-2 text-red-600 py-10">Gallery Upload</h3>
       <div className="row border">
         <form
           onSubmit={GalleryUpload}
@@ -105,7 +104,7 @@ const ImageUploadForm = () => {
             <button
               className="px-6
                         py-2.5
-                        bg-blue-600
+                        bg-red-600
                         text-white
                         font-medium
                         text-xs
@@ -113,9 +112,9 @@ const ImageUploadForm = () => {
                         uppercase
                         rounded
                         shadow-md
-                        hover:bg-blue-700 hover:shadow-lg
-                        focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0
-                        active:bg-blue-800 active:shadow-lg
+                        hover:bg-red-800 hover:shadow-lg
+                        focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0
+                        active:bg-red-800 active:shadow-lg
                         transition
                         duration-150
                         ease-in-out

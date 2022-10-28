@@ -7,11 +7,11 @@ import "regenerator-runtime";
 import store from "./store";
 import { Provider } from "react-redux";
 
-// declare global {
-//   interface Window {
-//       cloudinary: Cloudinary;
-//   }
-// }
+declare global {
+  interface Window {
+      cloudinary: any;
+  }
+}
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <Provider store={store}>

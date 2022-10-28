@@ -179,8 +179,8 @@ const AdminNavbar = () => {
         <div
           className={`${hiddenValCNUD} justify-between items-center sm:max-w-[250px] md:w-auto z-50 my-4 text-base bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 md:order-1 right-2 left-auto sm:absolute`}
         >
-          <div className="py-3 px-4">
-            <Link to="/admin/adminprofile" className="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+          <div className="py-3 px-4 hover:bg-gray-100 dark:hover:bg-gray-600  dark:hover:text-white rounded-md">
+            <Link to="/admin/adminprofile" className="block py-2 px-4 text-sm text-gray-700 dark:text-gray-200 ">
               <span className="block text-sm text-gray-900 dark:text-white">
                 {JSON.parse(sessionStorage.getItem("user") || "404").name}
               </span>
@@ -210,6 +210,7 @@ const AdminNavbar = () => {
                 onClick={() => {
                   dispatch(signOut({}));
                   setNavRdtLogin(true);
+                  setHiddenValCNUD("hidden");
                 }}
               >
                 Sign out

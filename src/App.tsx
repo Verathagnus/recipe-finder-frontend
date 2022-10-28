@@ -1,7 +1,6 @@
 import Navbar from "./components/Navbar";
 
 import About from "./routes/About";
-import Career from "./routes/Career";
 import Contact from "./routes/Contact";
 import Gallery from "./routes/Gallery";
 import Home from "./routes/Home";
