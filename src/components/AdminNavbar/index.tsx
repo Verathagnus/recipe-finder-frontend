@@ -28,9 +28,6 @@ const AdminNavbar = () => {
       const name = JSON.parse(
         sessionStorage.getItem("user") || JSON.stringify({ name: "404" })
       ).name.split(" ");
-      // console.log( JSON.parse(
-      //   sessionStorage.getItem("user") || JSON.stringify({ name: "404" })
-      // ).profilePicSecureUrl)
       return JSON.parse(
         sessionStorage.getItem("user") || JSON.stringify({ name: "404" })
       ).profilePicSecureUrl;
