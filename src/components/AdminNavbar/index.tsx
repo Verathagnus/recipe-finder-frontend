@@ -60,19 +60,19 @@ const AdminNavbar = () => {
   return (
     <>
       {navRdtLogin && <Navigate to="/adminlogin" />}
-      <nav className="px-2 sm:px-4 py-2.5 sticky w-full z-20 top-0 left-0 border-b border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 sm:max-h-[105px] md:max-h-[80px]">
+      <nav className="px-2 sm:px-4 py-2.5 sticky  z-20 top-0 left-0 border-b border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 md:max-h-[80px]">
         <div className="container flex flex-wrap justify-between items-center mx-auto">
           <Link to="/admin" className="flex justify-center items-center ">
             <img
               src="/recipe-finder-icon.png"
-              className="mr-3 sm:h-9 w-full max-h-[60px]"
+              className="mr-3 w-full max-h-[60px]"
               alt="Recipe Finder Logo"
             />
             <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
               Admin Panel
             </span>
           </Link>
-          <div className="flex md:order-2 items-center justify-center w-full md:w-auto">
+          <div className="flex md:order-2 items-center justify-center  md:w-auto">
             <Link to="/">
               <button
                 type="button"
@@ -138,7 +138,7 @@ const AdminNavbar = () => {
           <div
             className={`${hiddenValCN} justify-between items-center w-full md:flex md:w-auto md:order-1`}
             id="navbar-sticky"
-          >
+          > 
             <ul className="flex flex-col mt-4 md:p-4 md:mt-0 bg-gray-50 rounded-lg border border-gray-100 md:flex-row md:space-x-8  md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
               <li>
                 <NavLink
