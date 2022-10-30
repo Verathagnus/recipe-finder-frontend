@@ -45,6 +45,7 @@ const AdminNavbar = () => {
       sessionStorage.getItem("jwtToken") !== ""
     ) {
       VerifyJWT(sessionStorage.getItem("jwtToken")).then((res) => {
+        console.log(res.data)
         // console.log(res.data)
         if (!res.data.response) {
           setNavRdtLogin(true);
