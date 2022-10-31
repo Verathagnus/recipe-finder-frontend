@@ -11,7 +11,7 @@ const GalleryViewImages = () => {
   const imagesList = useAppSelector(selectImagesList);
   const loading = useAppSelector(selectLoading)
   const dispatch = useAppDispatch();
-  const [currentImg, setImg] = useState({secure_url: "", public_id: ""});
+  const [currentImg, setImg] = useState({ secure_url: "", public_id: "" });
   const onClickHandler = (idx: number) => {
     setImg(imagesList[idx]);
     console.log(currentImg);
@@ -26,31 +26,31 @@ const GalleryViewImages = () => {
         className=" px-10 w-[90%]  text-center mx-auto drop-shadow-lg pb-20 "
       >
         <h3 className="font-medium text-left leading-tight text-3xl mt-0 mb-2 text-red-600 pb-5 pt-10">
-        Gallery
+          Gallery
         </h3>
         <div className="flex flex-row justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 relative gap-x-4 gap-y-4 px-4 pt-5 sm:pt-5 text-black ">
-          
+
             {
-            
-            !(Array.isArray(imagesList) && imagesList.length > 0) ? "" : imagesList && imagesList.map((imageName, idx) => (
-              <div
-                key={imageName.secure_url}
-                className="ease-out duration-200  hover:cursor-pointer flex  justify-center items-center"
-              >
-                <div className="align-middle">
-                  <img
-                    onClick={() => onClickHandler(idx)}
-                    data-bs-toggle="modal"
-                    data-bs-target="#exampleModalCenter"
-                    className="hover:opacity-80 block object-cover  w-[340px]  md:h-[300px] md:w-[500px] rounded-lg shadow-2xl"
-                    key={imageName.secure_url}
-                    src={imageName.secure_url}
-                    alt={imageName.secure_url}
-                  />
+
+              !(Array.isArray(imagesList) && imagesList.length > 0) ? "" : imagesList && imagesList.map((imageName, idx) => (
+                <div
+                  key={imageName.secure_url}
+                  className="ease-out duration-200  hover:cursor-pointer flex  justify-center items-center"
+                >
+                  <div className="align-middle">
+                    <img
+                      onClick={() => onClickHandler(idx)}
+                      data-bs-toggle="modal"
+                      data-bs-target="#exampleModalCenter"
+                      className="hover:opacity-80 block object-cover  w-[340px]  md:h-[300px] md:w-[500px] rounded-lg shadow-2xl"
+                      key={imageName.secure_url}
+                      src={imageName.secure_url}
+                      alt={imageName.secure_url}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>

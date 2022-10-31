@@ -18,7 +18,7 @@ const GalleryDeleteImages = () => {
   const deleteHandler = (imagePublicId: string) => {
     dispatch(deleteImageThunk(imagePublicId));
   };
-  const [currentImgAdmin, setImgAdmin] = useState({secure_url: "", public_id: ""});
+  const [currentImgAdmin, setImgAdmin] = useState({ secure_url: "", public_id: "" });
   const onClickHandlerAdmin = (idx: number) => {
     setImgAdmin(imagesList[idx]);
     console.log(currentImgAdmin);
@@ -28,10 +28,10 @@ const GalleryDeleteImages = () => {
     <>
       <div
         id="gallery"
-        className="mx-auto drop-shadow-lg pb-20 flex flex-col"
+        className=" px-10 w-[90%]  text-center mx-auto drop-shadow-lg pb-20"
       >
-        <h3 className="font-medium text-left leading-tight text-3xl mt-0 mb-2 text-red-600 pb-5">Gallery Delete</h3>
-        
+        <h3 className="font-medium text-left leading-tight text-3xl mt-0 mb-2 text-red-600 pb-5 pt-10">Gallery Delete</h3>
+
         <div className="flex flex-row justify-start items-start">
           <button
             className="ml-1 max-h-10 px-6
@@ -58,7 +58,7 @@ const GalleryDeleteImages = () => {
         </div>
 
         <div className="flex flex-row justify-center">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2  relative gap-x-4 gap-y-4 pt-5 lg:grid-cols-3 lg:gap-3 sm:pt-5 text-black w-[400px] sm:w-[500px] md:w-[900px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 relative gap-x-4 gap-y-4 px-4 pt-5 sm:pt-5 text-black">
             {imagesList.map((imageName, idx) => (
               <div key={imageName.secure_url}>
                 <div className="ease-out duration-200  hover:cursor-pointer flex  justify-center items-center">
@@ -67,7 +67,7 @@ const GalleryDeleteImages = () => {
                       onClick={() => onClickHandlerAdmin(idx)}
                       data-bs-toggle="modal"
                       data-bs-target="#exampleModalCenter"
-                      className="hover:opacity-80 block object-cover object-center w-full h-full rounded-lg shadow-2xl"
+                      className="hover:opacity-80 block object-cover  w-[340px]  md:h-[300px] md:w-[500px] rounded-lg shadow-2xl"
                       key={imageName.secure_url}
                       src={imageName.secure_url}
                       alt={imageName.secure_url}
