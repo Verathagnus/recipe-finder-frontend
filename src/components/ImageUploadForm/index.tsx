@@ -83,12 +83,12 @@ const ImageUploadForm = () => {
     //myWidget.open();
   };
   return (
-    <div className="px-10  mx-auto drop-shadow-lg pb-20 flex flex-col justify-center">
-      <h3 className="font-medium leading-tight text-3xl mt-0 mb-2 text-red-600 py-10">Gallery Upload</h3>
+    <div className=" px-10 w-[90%] mx-auto drop-shadow-lg pb-20">
+      <h3 className="font-medium text-left leading-tight text-3xl mt-0 mb-2 text-red-600 pb-5 pt-10">Gallery Upload</h3>
       <div className="row border">
         <form
           onSubmit={GalleryUpload}
-          className="shadow-md p-2 flex flex-col w-[400px] sm:w-[500px] md:w-[900px] border"
+          className="shadow-md p-2 flex flex-col w-[400px] sm:w-[500px] md:w-[900px] border "
         >
           {/* <div className="form-group row py-sm-2 px-sm-3 mb-2">
             <label className={styles.label} htmlFor="uploadedResume">
