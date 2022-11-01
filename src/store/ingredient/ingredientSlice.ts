@@ -101,7 +101,7 @@ const ingredientSlice = createSlice({
   initialState,
   reducers: {
     clearIngredientFound: (state, action) => {
-      state.ingredientFound = {};
+      state.ingredientFound = emptyIngredient;
     },
   },
   extraReducers: (builder: ActionReducerMapBuilder<IIngredientState>) => {
