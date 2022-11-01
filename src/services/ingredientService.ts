@@ -43,7 +43,7 @@ export function updateIngredient(formData: FormData) {
 }
 
 export function deleteIngredient(id: string) {
-  return axios.post(baseUrl + "/delete/" + id, {
+  return axios.delete(baseUrl + "/delete/" + id, {
     headers: {
       "x-auth-token": sessionStorage.getItem("jwtToken"),
     },

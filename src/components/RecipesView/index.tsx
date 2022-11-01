@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getRecipesListAlphabetical } from "../../services/recipeService";
 import { useAppDispatch, useAppSelector } from "../../store";
 import {
@@ -15,9 +15,11 @@ const RecipesView = () => {
   useEffect(() => {
     dispatch(fetchRecipesPopular()).then(() => console.log(recipesList));
   }, []);
+  const navigate = useNavigate();
   const recipeModalHandler = (id: string) => {
     // TODO: ingredient modal
     console.log("Modal Open: Recipe: ", id);
+    navigate('/recipes/'+id);
   };
 
   const ingredientModalHandler = (id: string) => {
@@ -31,8 +33,7 @@ const RecipesView = () => {
           Recipes
         </h3>
         <div className="grid lg:grid-cols-2 gap-4">
-          {
-            // loadingState==="pending" &&
+          {loadingState === "pending" &&
             Array(4)
               .fill({})
               .map((ingredient, idx) => {
@@ -54,57 +55,28 @@ const RecipesView = () => {
                           <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
                         </svg>
                       </div>
-                      <div className="flex flex-col flex-1 gap-5 lg:p-2 my-auto  
-                      rounded-b lg:rounded-b-none lg:rounded-r p-4 leading-normal lg:w-[300px]   border-t border-t-yellow-400 lg:border-t-0">
-                        {/* <a
-                            className="hover:bg-yellow-200 rounded-md pl-5 cursor-pointer"
-                            onClick={() => {
-                              ingredientModalHandler(ingredient._id);
-                            }}
-                          >
-                            <div
-                              className="flex items-center py-2"
-                              key={ingredient._id}
-                            >
-                              <img
-                                className="w-10 h-10 rounded-full mr-4"
-                                src={
-                                  ingredient.attachmentFlag
-                                    ? ingredient.uploadedIngredientImage
-                                    : "https://res.cloudinary.com/dxgfvidct/image/upload/v1666940089/empty-ingredients_myiljy.jpg"
-                                }
-                                alt={ingredient.name}
-                              />
-                              <div className="text-sm">
-                                <p className="text-gray-900 leading-none">
-                                  {ingredient.name}
-                                </p>
-                                <p className="text-gray-600">
-                                  {ingredient.category}
-                                </p>
-                              </div>
-                            </div>
-                          </a> */}
+                      <div
+                        className="flex flex-col flex-1 gap-5 lg:p-2 my-auto  
+                      rounded-b lg:rounded-b-none lg:rounded-r p-4 leading-normal lg:w-[300px]   border-t border-t-yellow-400 lg:border-t-0"
+                      >
                         <div className="flex flex-1 flex-col gap-4 pl-5">
                           <div className="bg-green-200 w-20 animate-pulse h-5 rounded-xl"></div>
                           <div className="bg-gray-200 w-28 animate-pulse h-8 rounded-xl"></div>
 
                           <div className="flex flex-1 flex-col gap-4">
                             <div className="flex flex-2 justify-start items-center">
-                              <span className="flex justify-center items-center bg-gray-200  dark:bg-gray-400 border border-gray-300 animate-pulse w-10 h-10 rounded-full p-2 mr-5">
-                              </span>
+                              <span className="flex justify-center items-center bg-gray-200  dark:bg-gray-400 border border-gray-300 animate-pulse w-10 h-10 rounded-full p-2 mr-5"></span>
                               <div className="flex flex-col gap-2">
-                              <span className="bg-blue-200 w-40 animate-pulse h-3 rounded-xl"></span>
-                              <span className="bg-green-200 w-10 animate-pulse h-3 rounded-xl"></span>
+                                <span className="bg-blue-200 w-40 animate-pulse h-3 rounded-xl"></span>
+                                <span className="bg-green-200 w-10 animate-pulse h-3 rounded-xl"></span>
                               </div>
                             </div>
 
                             <div className="flex flex-2 justify-start items-center">
-                              <span className="flex justify-center items-center bg-gray-200  dark:bg-gray-400 border border-gray-300 animate-pulse w-10 h-10 rounded-full p-2 mr-5">
-                              </span>
+                              <span className="flex justify-center items-center bg-gray-200  dark:bg-gray-400 border border-gray-300 animate-pulse w-10 h-10 rounded-full p-2 mr-5"></span>
                               <div className="flex flex-col gap-2">
-                              <span className="bg-yellow-200 w-40 animate-pulse h-3 rounded-xl"></span>
-                              <span className="bg-red-200 w-20 animate-pulse h-3 rounded-xl"></span>
+                                <span className="bg-yellow-200 w-40 animate-pulse h-3 rounded-xl"></span>
+                                <span className="bg-red-200 w-20 animate-pulse h-3 rounded-xl"></span>
                               </div>
                             </div>
                           </div>
@@ -118,8 +90,7 @@ const RecipesView = () => {
                     </div>
                   </Fragment>
                 );
-              })
-          }
+              })}
         </div>
         {loadingState === "succeeded" && recipesList.length === 0 && (
           <p>No ingredients present</p>
@@ -204,9 +175,13 @@ const RecipesView = () => {
                                 <p className="text-gray-900 leading-none">
                                   {ingredient.name}
                                 </p>
-                                <p className="text-gray-600">
-                                  {ingredient.category}
-                                </p>
+                                <div className="">
+                                {ingredient.category === "Veg" ? (
+                                  <p className="text-green-500 font-bold bg-green-100 rounded-full px-3 mt-2">Veg</p>
+                                ) : (
+                                  <p className="text-red-500 font-bold bg-red-100 rounded-full px-3 mt-2">Non-Veg</p>
+                                )}
+                              </div>
                               </div>
                             </div>
                           </a>

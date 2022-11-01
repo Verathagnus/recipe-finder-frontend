@@ -99,11 +99,22 @@ export const updateRecipeThunk = createAsyncThunk(
     }
   }
 );
-
+const emptyRecipe: RecipeGetType = {
+  _id: "",
+  name: "",
+  timeToCook: "",
+  ingredientsRequired: [],
+  recipeText: "",
+  uploadedRecipeImageFlag: false,
+  uploadedRecipeImageFileName: "",
+  uploadedRecipeImageFileNamePublicId: "",
+  dateUploaded: "",
+  views: 0,
+};
 const initialState = {
   recipes: [],
   loading: "idle",
-  recipeFound: {},
+  recipeFound: emptyRecipe,
   recipesCount: 0,
 } as IRecipeState;
 
@@ -112,7 +123,7 @@ const recipeSlice = createSlice({
   initialState,
   reducers: {
     clearRecipeFound: (state, action) => {
-      state.recipeFound = {};
+      state.recipeFound = emptyRecipe;
     },
   },
   extraReducers: (builder: ActionReducerMapBuilder<IRecipeState>) => {
@@ -164,6 +175,7 @@ const recipeSlice = createSlice({
       .addCase(fetchRecipe.fulfilled, (state, action) => {
         console.log(action.payload);
         state.recipeFound = action.payload.recipe;
+        state.loading = "succeeded";
         // alert(JSON.stringify(state.recipeFound));
       })
       .addCase(fetchRecipe.pending, (state, action) => {

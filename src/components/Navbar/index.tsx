@@ -167,7 +167,7 @@ const Navbar = () => {
                   to="/"
                   className={({ isActive }) =>
                     isActive
-                      ? "block py-2 pr-4 pl-3 text-white bg-red-700 rounded md:bg-transparent md:text-red-700 hover:text-teal-600 md:p-0 dark:text-white"
+                      ? "block py-2 pr-4 pl-3 text-white bg-red-700 rounded md:bg-transparent md:text-red-700 hover:text-teal-600 md:p-0 dark:text-white dark:md:text-red-700 hover:dark:text-teal-600"
                       : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                   }
                   aria-current="page"
@@ -180,7 +180,7 @@ const Navbar = () => {
                   to="/ingredients"
                   className={({ isActive }) =>
                     isActive
-                      ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white"
+                      ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white dark:md:text-blue-700 dark:hover:text-teal-600"
                       : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                   }
                 >
@@ -192,7 +192,7 @@ const Navbar = () => {
                   to="/recipes"
                   className={({ isActive }) =>
                     isActive
-                      ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white"
+                      ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white dark:md:text-blue-700 dark:hover:text-teal-600"
                       : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                   }
                 >
@@ -204,7 +204,7 @@ const Navbar = () => {
                   to="/gallery"
                   className={({ isActive }) =>
                     isActive
-                      ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white"
+                      ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white dark:md:text-blue-700 dark:hover:text-teal-600"
                       : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                   }
                 >
@@ -216,7 +216,7 @@ const Navbar = () => {
                   to="/about"
                   className={({ isActive }) =>
                     isActive
-                      ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white"
+                      ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white dark:md:text-blue-700 dark:hover:text-teal-600"
                       : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                   }
                 >

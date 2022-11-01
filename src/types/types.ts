@@ -43,14 +43,14 @@ export interface IngredientGetType {
 export interface IIngredientState {
   ingredients: IngredientGetType[];
   loading: string;
-  ingredientFound: IngredientGetType | {};
+  ingredientFound: IngredientGetType;
   ingredientsCount: number;
 }
 
 export interface IRecipeState {
   recipes: RecipeGetType[];
   loading: string;
-  recipeFound: RecipeGetType | {};
+  recipeFound: RecipeGetType;
   recipesCount: number;
 }
 export interface RecipeGetType {
@@ -62,7 +62,7 @@ export interface RecipeGetType {
   uploadedRecipeImageFlag: boolean;
   uploadedRecipeImageFileName: string;
   uploadedRecipeImageFileNamePublicId: string;
-  dateUploaded: Date;
+  dateUploaded: Date | string;
   views: number;
 }
 

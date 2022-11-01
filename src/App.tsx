@@ -16,6 +16,8 @@ import Ingredients from "./routes/Ingredients";
 import RecipesAdmin from "./components/RecipesAdmin";
 import IngredientsAdmin from "./components/IngredientsAdmin";
 import { useEffect } from "react";
+import Recipe from "./routes/Recipe";
+import Ingredient from "./routes/Ingredient";
 
 function App() {
   return (
@@ -25,7 +27,9 @@ function App() {
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="recipes" element={<Recipes />} />
+          <Route path="recipes/:id" element={<Recipe/>}/>
           <Route path="ingredients" element={<Ingredients />} />
+          <Route path="ingredients/:id" element={<Ingredient />} />
           <Route path="contact" element={<Contact />} />
           <Route path="gallery" element={<Gallery />} />
         </Route>

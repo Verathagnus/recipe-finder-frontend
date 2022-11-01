@@ -6,6 +6,7 @@ import {
   selectIngredients,
   selectLoading,
 } from "../../store/ingredient/ingredientSlice";
+import { useNavigate } from "react-router-dom";
 
 const IngredientsView = () => {
   const dispatch = useAppDispatch();
@@ -17,12 +18,14 @@ const IngredientsView = () => {
       console.log(ingredientsList)
     );
   }, []);
+  const navigate = useNavigate();
   const ingredientModalHandler = (id: string) => {
     // TODO: ingredient modal
     console.log("Modal Open: Ingredient: ", id);
+    navigate("/ingredients/"+id);
   };
   //  className="
-    // dark:bg-gray-800"
+  // dark:bg-gray-800"
   return (
     <div>
       <div className="px-10 w-[90%]  mx-auto drop-shadow-lg pb-20 ">
@@ -30,8 +33,7 @@ const IngredientsView = () => {
           Ingredients
         </h3>
         <div className="grid lg:grid-cols-2 gap-4">
-          {
-            // loadingState==="pending" &&
+          {loadingState === "pending" &&
             Array(4)
               .fill({})
               .map((ingredient, idx) => {
@@ -61,10 +63,10 @@ const IngredientsView = () => {
                           </span>
                         </div>
                         <span className="flex md:hidden flex-1 flex-col gap-4">
-                            <div className="bg-blue-200 w-20 animate-pulse h-3 rounded-xl"></div>
-                            <div className="bg-red-200 w-20 animate-pulse h-3 rounded-xl"></div>
-                            <div className="bg-yellow-200 w-20 animate-pulse h-3 rounded-xl"></div>
-                          </span>
+                          <div className="bg-blue-200 w-20 animate-pulse h-3 rounded-xl"></div>
+                          <div className="bg-red-200 w-20 animate-pulse h-3 rounded-xl"></div>
+                          <div className="bg-yellow-200 w-20 animate-pulse h-3 rounded-xl"></div>
+                        </span>
                         {/* <div className="mt-auto flex gap-3">
                         <div className="bg-gray-200 w-20 h-8 animate-pulse rounded-full"></div>
                         <div className="bg-gray-200 w-20 h-8 animate-pulse rounded-full"></div>
@@ -74,8 +76,7 @@ const IngredientsView = () => {
                     </div>
                   </Fragment>
                 );
-              })
-          }
+              })}
         </div>
         {loadingState === "succeeded" && ingredientsList.length === 0 && (
           <p>No ingredients present</p>

@@ -78,11 +78,21 @@ export const updateIngredientThunk = createAsyncThunk(
     }
   }
 );
-
+const emptyIngredient = {_id: "",
+  name: "",
+  category: "",
+  ingredientText: "",
+  attachmentFlag: false,
+  uploadedIngredientImage: "",
+  uploadedIngredientImagePublicId: "",
+  filter_plus: 0,
+  filter_minus: 0,
+  popularity: 0
+};
 const initialState = {
   ingredients: [],
   loading: "idle",
-  ingredientFound: {},
+  ingredientFound: emptyIngredient,
   ingredientsCount: 0,
 } as IIngredientState;
 
@@ -121,6 +131,7 @@ const ingredientSlice = createSlice({
       .addCase(fetchIngredient.fulfilled, (state, action) => {
         console.log(action.payload);
         state.ingredientFound = action.payload.ingredient;
+        state.loading = "succeeded";
         // alert(JSON.stringify(state.ingredientFound));
       })
       .addCase(fetchIngredient.pending, (state, action) => {
