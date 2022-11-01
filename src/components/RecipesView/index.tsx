@@ -25,6 +25,7 @@ const RecipesView = () => {
   const ingredientModalHandler = (id: string) => {
     // TODO: ingredient modal
     console.log("Modal Open: Ingredient: ", id);
+    navigate('/ingredients/'+id);
   };
   return (
     <>
@@ -101,7 +102,7 @@ const RecipesView = () => {
               return (
                 <div className="" key={recipe._id}>
                   {/* <p className="break-words">{JSON.stringify(recipe)}</p> */}
-                  <div className="max-w-full sm:max-w-full md:max-w-full w-full lg:max-w-full lg:flex mt-5 bg-white border rounded-md hover:bg-red-200 border-r border-b border-l border-red-400 lg:border-l-0 lg:border-t lg:border-red-400">
+                  <div className="max-w-full sm:max-w-full md:max-w-full w-full lg:max-w-full lg:flex mt-5 bg-white border rounded-md hover:bg-red-200 border-r border-b border-l border-red-400 lg:border-l-0 lg:border-t lg:border-red-400 lg:min-h-[280px]">
                     <div
                       className="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden cursor-pointer"
                       onClick={() => {
@@ -147,9 +148,10 @@ const RecipesView = () => {
                           {recipe.name}
                         </div>
                         <p className="text-gray-700 text-base">
-                          {recipe.recipeText}
+                          {recipe.recipeText.length > 50 ? <>{recipe.recipeText.slice(0, 50)} <span className="text-teal-400">... Read More</span></> : recipe.recipeText}
                         </p>
                       </div>
+                      <div className="grid grid-cols-1">
                       {recipe.ingredientsRequired.map((ingredient) => {
                         return (
                           <a
@@ -187,6 +189,7 @@ const RecipesView = () => {
                           </a>
                         );
                       })}
+                      </div>
                     </div>
                   </div>
                 </div>
