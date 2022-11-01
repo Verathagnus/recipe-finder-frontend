@@ -15,6 +15,7 @@ import Recipes from "./routes/Recipes";
 import Ingredients from "./routes/Ingredients";
 import RecipesAdmin from "./components/RecipesAdmin";
 import IngredientsAdmin from "./components/IngredientsAdmin";
+import { useEffect } from "react";
 
 function App() {
   return (

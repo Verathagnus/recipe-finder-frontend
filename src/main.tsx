@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import "regenerator-runtime";
 import store from "./store";
 import { Provider } from "react-redux";
-
+// import {ThemeProvider} from './ThemeContext';
 declare global {
   interface Window {
       cloudinary: any;
@@ -14,9 +14,11 @@ declare global {
 }
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <Provider store={store}>
+  // <ThemeProvider>
+    <Provider store={store}>
     <BrowserRouter>
       <App />
     </BrowserRouter>
   </Provider>
+  // </ThemeProvider>
 );

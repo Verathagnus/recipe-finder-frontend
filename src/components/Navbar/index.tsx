@@ -6,8 +6,10 @@ import { Link, Navigate, NavLink, Outlet } from "react-router-dom";
 import { useAppDispatch } from "../../store";
 import { signOut } from "../../store/admin/adminSlice";
 import { VerifyJWT } from "../../services/userService";
+import DarkModeToggle from "react-dark-mode-toggle";
 
 const Navbar = () => {
+  const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
   const returnInitialsName = () => {
     if (
       sessionStorage.getItem("user") ||
@@ -82,6 +84,21 @@ const Navbar = () => {
                 Sign In
               </button>
             </Link>
+
+            
+            <DarkModeToggle
+              // onChange={setIsDarkMode}\
+              className="m-2"
+              onChange={() => {
+                  if (localStorage.theme === "light")
+                    localStorage.setItem("theme", "dark");
+                  else localStorage.setItem("theme", "light");
+                  window.location.reload();
+                }
+              }
+              checked={isDarkMode}
+              size={80}
+            />
             <button
               data-collapse-toggle="navbar-sticky"
               type="button"
@@ -124,7 +141,11 @@ const Navbar = () => {
                 >
                   <span className="sr-only">Open user menu</span>
                   {returnUserPic() && (
-                    <img className="font-bold text-gray-200 rounded-full bg-teal-600 flex items-center justify-center font-mono focus:ring-4 focus:ring-teal-200 dark:focus:ring-teal-300" src={returnUserPic()} alt={returnInitialsName()} />
+                    <img
+                      className="font-bold text-gray-200 rounded-full bg-teal-600 flex items-center justify-center font-mono focus:ring-4 focus:ring-teal-200 dark:focus:ring-teal-300"
+                      src={returnUserPic()}
+                      alt={returnInitialsName()}
+                    />
                   )}
                   {returnUserPic() === false && (
                     <div className="font-bold text-gray-200 rounded-full bg-teal-600 flex items-center justify-center font-mono focus:ring-4 focus:ring-teal-200 dark:focus:ring-teal-300">
@@ -144,7 +165,11 @@ const Navbar = () => {
               <li>
                 <NavLink
                   to="/"
-                  className={({ isActive }) => (isActive ? "block py-2 pr-4 pl-3 text-white bg-red-700 rounded md:bg-transparent md:text-red-700 hover:text-teal-600 md:p-0 dark:text-white" : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700")}
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block py-2 pr-4 pl-3 text-white bg-red-700 rounded md:bg-transparent md:text-red-700 hover:text-teal-600 md:p-0 dark:text-white"
+                      : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  }
                   aria-current="page"
                 >
                   Home
@@ -153,7 +178,11 @@ const Navbar = () => {
               <li>
                 <NavLink
                   to="/ingredients"
-                  className={({ isActive }) => (isActive ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white" : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700")}
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white"
+                      : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  }
                 >
                   Ingredients
                 </NavLink>
@@ -161,7 +190,11 @@ const Navbar = () => {
               <li>
                 <NavLink
                   to="/recipes"
-                  className={({ isActive }) => (isActive ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white" : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700")}
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white"
+                      : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  }
                 >
                   Recipes
                 </NavLink>
@@ -169,7 +202,11 @@ const Navbar = () => {
               <li>
                 <NavLink
                   to="/gallery"
-                  className={({ isActive }) => (isActive ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white" : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700")}
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white"
+                      : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  }
                 >
                   Gallery
                 </NavLink>
@@ -177,7 +214,11 @@ const Navbar = () => {
               <li>
                 <NavLink
                   to="/about"
-                  className={({ isActive }) => (isActive ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white" : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700")}
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 hover:text-teal-600 md:p-0 dark:text-white"
+                      : "block py-2 pr-4 pl-3 text-gray-700 rounded hover:text-teal-600 md:hover:bg-transparent md:hover:text-teal-600 md:p-0 md:dark:hover:text-teal-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  }
                 >
                   About
                 </NavLink>
@@ -189,7 +230,10 @@ const Navbar = () => {
           className={`${hiddenValCNUD} justify-between items-center sm:max-w-[250px] md:w-auto z-50 my-4 text-base bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 md:order-1 right-2 left-auto sm:absolute`}
         >
           <div className="py-3 px-4">
-            <Link to="/admin/adminprofile" className="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+            <Link
+              to="/admin/adminprofile"
+              className="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+            >
               <span className="block text-sm text-gray-900 dark:text-white">
                 {JSON.parse(sessionStorage.getItem("user") || "404").name}
               </span>
@@ -220,7 +264,6 @@ const Navbar = () => {
                   dispatch(signOut({}));
                   setNavRdtLogin(true);
                   setHiddenValCNUD("hidden");
-                  
                 }}
               >
                 Sign out
