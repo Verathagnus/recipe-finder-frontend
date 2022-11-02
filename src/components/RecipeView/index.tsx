@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store";
 import {
   fetchRecipe,
@@ -21,10 +21,11 @@ const RecipeView = () => {
     // TODO: ingredient modal
     console.log("Modal Open: Recipe: ", id);
   };
-
+  const navigate = useNavigate();
   const ingredientModalHandler = (id: string) => {
     // TODO: ingredient modal
     console.log("Modal Open: Ingredient: ", id);
+    navigate('/ingredients/'+id);
   };
   return (
     <>
