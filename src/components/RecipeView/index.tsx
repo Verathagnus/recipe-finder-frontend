@@ -35,7 +35,7 @@ const RecipeView = () => {
         </h3>
         <div className="max-w-full w-full  max-h-full">
           {
-            // loadingState === "pending" &&
+            loadingState === "pending" &&
 
             [{}].map((ingredient, idx) => {
               return (
