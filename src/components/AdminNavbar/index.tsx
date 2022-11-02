@@ -3,6 +3,7 @@ import { Link, Navigate, NavLink, Outlet } from "react-router-dom";
 import { useAppDispatch } from "../../store";
 import { signOut } from "../../store/admin/adminSlice";
 import { VerifyJWT } from "../../services/userService";
+import DarkModeToggle from "react-dark-mode-toggle";
 
 const AdminNavbar = () => {
   const returnInitialsName = () => {
@@ -38,6 +39,7 @@ const AdminNavbar = () => {
   const [hiddenValCN, setHiddenValCN] = useState("hidden");
   const [hiddenValCNUD, setHiddenValCNUD] = useState("hidden");
   const [navRdtLogin, setNavRdtLogin] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
   const dispatch = useAppDispatch();
   useEffect(() => {
     if (
@@ -79,6 +81,19 @@ const AdminNavbar = () => {
                 Main Site
               </button>
             </Link>
+            <DarkModeToggle
+              // onChange={setIsDarkMode}\
+              className="m-2"
+              onChange={() => {
+                  if (localStorage.theme === "light")
+                    localStorage.setItem("theme", "dark");
+                  else localStorage.setItem("theme", "light");
+                  window.location.reload();
+                }
+              }
+              checked={isDarkMode}
+              size={80}
+            />
             <button
               data-collapse-toggle="navbar-sticky"
               type="button"
@@ -118,9 +133,13 @@ const AdminNavbar = () => {
                     if (hiddenValCNUD === "") setHiddenValCNUD("hidden");
                     else setHiddenValCNUD("");
                   }}
-                  onBlur={() => {
-                    if (hiddenValCNUD === "") setHiddenValCNUD("hidden");
-                    else setHiddenValCNUD("");
+                  onBlur={({relatedTarget }) => {
+                    console.log(relatedTarget?.id);
+                    if (relatedTarget === null || 'us' !== relatedTarget?.id.split("-")[0]){
+                      if (hiddenValCNUD === "")
+                          setHiddenValCNUD("hidden");
+                      else setHiddenValCNUD("");
+                    }
                   }}
                 >
                   <span className="sr-only">Open user menu</span>
@@ -205,6 +224,10 @@ const AdminNavbar = () => {
             <Link
               to="/admin/adminprofile"
               className="block py-2 px-4 text-sm text-gray-700 dark:text-gray-200 "
+              onClick={() => {
+                setHiddenValCNUD("hidden");
+              }}
+              id="us-0"
             >
               <span className="block text-sm text-gray-900 dark:text-white">
                 {JSON.parse(sessionStorage.getItem("user") || "404").name}
@@ -220,9 +243,9 @@ const AdminNavbar = () => {
                 to="/admin"
                 className="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                 onClick={() => {
-                  if (hiddenValCNUD === "") setHiddenValCNUD("hidden");
-                  else setHiddenValCNUD("");
+                  setHiddenValCNUD("hidden");
                 }}
+                id="us-1"
               >
                 Admin Home
               </Link>
@@ -237,6 +260,7 @@ const AdminNavbar = () => {
                   setNavRdtLogin(true);
                   setHiddenValCNUD("hidden");
                 }}
+                id="us-2"
               >
                 Sign out
               </a>

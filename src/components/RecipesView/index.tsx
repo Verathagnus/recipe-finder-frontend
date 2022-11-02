@@ -100,11 +100,11 @@ const RecipesView = () => {
           {recipesList &&
             recipesList.map((recipe) => {
               return (
-                <div className="" key={recipe._id}>
+                <div className="rounded-md border border-red-400" key={recipe._id}>
                   {/* <p className="break-words">{JSON.stringify(recipe)}</p> */}
-                  <div className="max-w-full sm:max-w-full md:max-w-full w-full lg:max-w-full lg:flex mt-5 bg-white border rounded-md hover:bg-red-200 border-r border-b border-l border-red-400 lg:border-l-0 lg:border-t lg:border-red-400 lg:min-h-[280px]">
+                  <div className="max-w-full sm:max-w-full md:max-w-full w-full lg:max-w-full lg:flex bg-white  rounded-md hover:bg-red-200  lg:min-h-[280px]">
                     <div
-                      className="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden cursor-pointer"
+                      className="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-r-none lg:rounded-l text-center overflow-hidden cursor-pointer"
                       onClick={() => {
                         recipeModalHandler(recipe._id);
                       }}
@@ -148,7 +148,7 @@ const RecipesView = () => {
                           {recipe.name}
                         </div>
                         <p className="text-gray-700 text-base">
-                          {recipe.recipeText.length > 50 ? <>{recipe.recipeText.slice(0, 50)} <span className="text-teal-400">... Read More</span></> : recipe.recipeText}
+                          {recipe.recipeText.length > 50 ? <>{recipe.recipeText.slice(0, 50)} <span className="text-teal-400 hover:text-blue-400">... Read More</span></> : recipe.recipeText}
                         </p>
                       </div>
                       <div className="grid grid-cols-1">

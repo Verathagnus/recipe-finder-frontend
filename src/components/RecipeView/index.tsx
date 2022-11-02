@@ -117,7 +117,11 @@ const RecipeView = () => {
                     <div className="lg:h-[500px]  flex-none bg-cover rounded-t  text-center overflow-hidden p-5">
                       <img
                         className="rounded-md"
-                        src={recipe.uploadedRecipeImageFileName}
+                        src={
+                          recipe.uploadedRecipeImageFlag
+                            ? recipe.uploadedRecipeImageFileName
+                            : 'https://res.cloudinary.com/dxgfvidct/image/upload/v1666940089/empty-recipe_o3l7qn.jpg'
+                        }
                       />
                     </div>
                     <div className="  rounded-b p-4 flex flex-col justify-between leading-normal ">

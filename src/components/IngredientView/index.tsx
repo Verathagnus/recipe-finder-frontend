@@ -32,8 +32,9 @@ const IngredientView = () => {
         <h3 className="font-medium text-left leading-tight text-3xl mt-0 mb-2 text-red-600 pt-10">
           Ingredients
         </h3>
-        <div className="grid lg:grid-cols-2 gap-4">
-          {loadingState === "pending" &&
+        <div className="max-w-full w-full   bg-white border rounded-md  max-h-full ">
+          {
+            loadingState === "pending" &&
             Array(1)
               .fill({})
               .map((ingredient, idx) => {
@@ -41,12 +42,12 @@ const IngredientView = () => {
                   <Fragment key={idx}>
                     {/* <p className="break-words">{JSON.stringify(ingredient)}</p> */}
                     <div
-                      className="bg-white rounded shadow-lg flex flex-col  select-none border max-w-full w-full border-red-500 
-                  h-48  flex-none bg-cover rounded-t text-center overflow-hidden min-h-[400px]"
+                      className="bg-white dark:bg-gray-100 shadow-lg  select-none border max-w-full w-full 
+                      flex-none bg-cover text-center overflow-hidden grid grid-cols-1 lg:grid-cols-2 rounded-md border-red-400"
                     >
-                      <div className="flex justify-center items-center w-full h-full bg-gray-200 max-h-[192px] dark:bg-gray-400 animate-pulse">
+                      <div className="flex justify-center items-center bg-gray-200 dark:bg-gray-400 animate-pulse h-[300px] w-full text-center overflow-hidden bg-cover rounded-l-md ">
                         <svg
-                          className="w-12 h-12 text-gray-200"
+                          className="w-12 h-12 text-gray-300"
                           xmlns="http://www.w3.org/2000/svg"
                           aria-hidden="true"
                           fill="currentColor"
@@ -56,10 +57,10 @@ const IngredientView = () => {
                         </svg>
                       </div>
                       <div
-                        className="flex flex-col flex-1 gap-5  my-auto  
-                      rounded-b lg p-4 leading-normal  border-t border-t-yellow-400 "
+                        className="flex flex-col flex-1 gap-5   
+                        rounded-b lg py-10 lg:p-4 leading-normal"
                       >
-                        <div className="flex flex-1 flex-col gap-4 pl-5">
+                        <div className="flex flex-1 flex-col gap-4 pl-5 lg:pt-10">
                           <div className="bg-green-200 w-10 animate-pulse h-5 rounded-xl"></div>
                           <div className="bg-gray-200 w-20 animate-pulse h-8 rounded-xl"></div>
                           <span className="flex flex-1 flex-col gap-4">
@@ -77,42 +78,35 @@ const IngredientView = () => {
                     </div>
                   </Fragment>
                 );
-              })}
+              })
+          }
         </div>
         {loadingState === "succeeded" && ingredient.name === "" && (
           <p>No ingredients present</p>
         )}
-        <div className="grid lg:grid-cols-2 lg:gap-4">
+        <div className="max-w-full w-full   bg-white border rounded-md   max-h-full ">
           {ingredient && (
-            <Fragment key={ingredient._id}>
+            <>
               {/* <p className="break-words">{JSON.stringify(ingredient)}</p> */}
-              <div className="max-w-full w-full pt-5 ">
-                <div
-                  className="h-48 flex-none bg-cover rounded-t text-center overflow-hidden cursor-pointer border-t border-l border-r  border-red-400 lg:border-l-1 lg:border-t lg:border-red-400 hover:bg-red-200  lg:border-b "
+              <div className="bg-white dark:bg-gray-100 shadow-lg  select-none border max-w-full w-full 
+                      flex-none bg-cover  overflow-hidden grid grid-cols-1 lg:grid-cols-2 rounded-md border-red-400">
+                <img
+                  className="rounded-l-md"
                   onClick={() => {
                     ingredientModalHandler(ingredient._id);
                   }}
                   // style="background-image: url('/img/card-left.jpg')"
-                  style={
+                  src={
                     ingredient.attachmentFlag
-                      ? {
-                          backgroundImage: `url(${ingredient.uploadedIngredientImage})`,
-                        }
-                      : {
-                          backgroundImage: `url(https://res.cloudinary.com/dxgfvidct/image/upload/v1666940089/empty-ingredients_myiljy.jpg)`,
-                        }
+                      ? ingredient.uploadedIngredientImage
+                      : 'https://res.cloudinary.com/dxgfvidct/image/upload/v1666940089/empty-ingredients_myiljy.jpg'
                   }
-                  title={ingredient.name}
-                >
-                  {/* <img src={ingredient.uploadedRecipeImageFileName}></img> */}
-                </div>
+                />
                 <div
-                  className=" bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex md:flex-col justify-between leading-normal lg:w-[300px] flex-row border-r border-b border-t border-l border-red-400 border-t-yellow-400 lg:border-t lg:border-red-400 
-                   
-                    hover:bg-red-200 lg:border-l-yellow-400"
+                  className="flex flex-col flex-1 gap-5   
+                  rounded-b p-10 leading-normal"
                 >
                   <div
-                    className="mb-2 cursor-pointer"
                     onClick={() => {
                       ingredientModalHandler(ingredient._id);
                     }}
@@ -132,7 +126,7 @@ const IngredientView = () => {
                     </p>
                   </div>
                   <div
-                  // className="hidden md:block"
+                  className=""
                   >
                     <div>
                       <span className="text-blue-500">Filtered + </span>
@@ -149,7 +143,7 @@ const IngredientView = () => {
                   </div>
                 </div>
               </div>
-            </Fragment>
+            </>
           )}
         </div>
       </div>

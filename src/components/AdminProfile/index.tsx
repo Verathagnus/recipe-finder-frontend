@@ -5,10 +5,6 @@ import { signOut } from "../../store/admin/adminSlice";
 import { VerifyJWT } from "../../services/userService";
 
 const AdminProfile = () => {
-
-  const [hiddenValCN, setHiddenValCN] = useState("hidden");
-  const [hiddenValCNUD, setHiddenValCNUD] = useState("hidden");
-  const [navRdtLogin, setNavRdtLogin] = useState(false);
   const dispatch = useAppDispatch();
   return (
     <>
