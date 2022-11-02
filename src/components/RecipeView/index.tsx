@@ -33,7 +33,7 @@ const RecipeView = () => {
         <h3 className="font-medium text-left leading-tight text-3xl mt-0 mb-2 text-red-600 pt-10 ">
           Recipe
         </h3>
-        <div className="max-w-full w-full bg-white dark:bg-gray-100 border rounded-md border-r border-b border-l border-red-400  max-h-full">
+        <div className="max-w-full w-full  max-h-full">
           {
             // loadingState === "pending" &&
 
@@ -42,8 +42,8 @@ const RecipeView = () => {
                 <Fragment key={idx}>
                   {/* <p className="break-words">{JSON.stringify(ingredient)}</p> */}
                   <div
-                    className="bg-white dark:bg-gray-100  rounded shadow-lg  select-none border max-w-full w-full 
-                    flex-none bg-cover rounded-t text-center overflow-hidden min-h-[400px]  grid grid-cols-1 lg:grid-cols-2 p-5"
+                    className="bg-white dark:bg-gray-100 shadow-lg  select-none border max-w-full w-full 
+                    flex-none bg-cover text-center overflow-hidden min-h-[400px]  grid grid-cols-1 lg:grid-cols-2 p-5 rounded-md border-r border-b border-l border-red-400  "
                   >
                     <div className="flex justify-center items-center bg-gray-200 dark:bg-gray-400 animate-pulse  h-[300px] text-center overflow-hidden bg-cover rounded-md border-yellow-600">
                       <svg
