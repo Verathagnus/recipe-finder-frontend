@@ -14,7 +14,7 @@ export function getRecipesListPopular() {
 
 
 export function getRecipesListAlphabetical() {
-  return axios.get(baseUrl + "/get-all-recipes-alphabet");
+  return axios.get(baseUrl + "/get-all-recipes-alphabetical");
 }
 
 export function getRecipeImageUploadSign() {
@@ -38,6 +38,7 @@ export function filterForRecipe(formData: FormData) {
 }
 
 export function createRecipe(formData: FormData) {
+  console.log(formData)
   return axios.post(baseUrl + "/upload-recipe", formData, {
     headers: {
       "Content-Type": "application/json",

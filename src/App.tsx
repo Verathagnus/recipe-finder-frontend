@@ -13,11 +13,11 @@ import AdminProfile from "./components/AdminProfile";
 import AdminLoginForm from "./components/AdminLoginForm";
 import Recipes from "./routes/Recipes";
 import Ingredients from "./routes/Ingredients";
-import RecipesAdmin from "./components/RecipesAdmin";
 import IngredientsAdmin from "./components/IngredientsAdmin";
 import { useEffect } from "react";
 import Recipe from "./routes/Recipe";
 import Ingredient from "./routes/Ingredient";
+import RecipesAdmin from "./components/RecipesAdmin";
 
 function App() {
   return (

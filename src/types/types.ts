@@ -52,6 +52,8 @@ export interface IRecipeState {
   loading: string;
   recipeFound: RecipeGetType;
   recipesCount: number;
+  editRecipeId: string;
+  recipeTextView: string;
 }
 export interface RecipeGetType {
   _id: string;

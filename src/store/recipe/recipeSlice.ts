@@ -116,6 +116,8 @@ const initialState = {
   loading: "idle",
   recipeFound: emptyRecipe,
   recipesCount: 0,
+  editRecipeId: "",
+  recipeTextView: "",
 } as IRecipeState;
 
 const recipeSlice = createSlice({
@@ -124,6 +126,12 @@ const recipeSlice = createSlice({
   reducers: {
     clearRecipeFound: (state, action) => {
       state.recipeFound = emptyRecipe;
+    },
+    setEditRecipeId: (state, action) => {
+      state.editRecipeId = action.payload;
+    },
+    setRecipeTextView: (state, action) => {
+      state.recipeTextView = action.payload;
     },
   },
   extraReducers: (builder: ActionReducerMapBuilder<IRecipeState>) => {
@@ -175,15 +183,15 @@ const recipeSlice = createSlice({
       .addCase(fetchRecipe.fulfilled, (state, action) => {
         console.log(action.payload);
         state.recipeFound = action.payload.recipe;
-        state.loading = "succeeded";
+        state.loading = "succeededOne";
         // alert(JSON.stringify(state.recipeFound));
       })
       .addCase(fetchRecipe.pending, (state, action) => {
-        state.loading = "pending";
+        state.loading = "pendingOne";
         // console.log(state.recipeFound);
       })
       .addCase(fetchRecipe.rejected, (state, action) => {
-        state.loading = "rejected";
+        state.loading = "rejectedOne";
       })
       .addCase(deleteRecipeThunk.fulfilled, (state, action) => {
         console.log(action.payload);
@@ -209,14 +217,19 @@ const recipeSlice = createSlice({
   },
 });
 
-export const { clearRecipeFound } = recipeSlice.actions;
+export const { clearRecipeFound, setEditRecipeId, setRecipeTextView } =
+  recipeSlice.actions;
 
 export const selectRecipes = (state: RootState) => state.recipe.recipes;
 export const selectLoading = (state: RootState) => state.recipe.loading;
 export const selectRecipe = (state: RootState) => state.recipe.recipeFound;
 export const selectRecipeCount = (state: RootState) =>
   state.recipe.recipesCount;
+export const selectEditRecipeId = (state: RootState) =>
+  state.recipe.editRecipeId;
 
+  export const selectRecipeTextView = (state: RootState) =>
+  state.recipe.recipeTextView;
 //default export
 
 export default recipeSlice.reducer;

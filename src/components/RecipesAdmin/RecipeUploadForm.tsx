@@ -8,40 +8,19 @@ import {
   useFormikContext,
 } from "formik";
 import FormData from "form-data";
-import { useAppDispatch } from "../../store";
-import { submitIngredientThunk } from "../../store/ingredient/ingredientSlice";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { submitRecipeThunk } from "../../store/recipe/recipeSlice";
 import DateView from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
 import { Cloudinary } from "@cloudinary/url-gen/instance/Cloudinary";
-import { getIngredientImageUploadSign } from "../../services/ingredientService";
-function DatePicker(props: any) {
-  const { label, name, ...rest } = props;
-  return (
-    <div className="form-group row py-sm-2 px-sm-3">
-      <label className={styles.label} htmlFor={name}>
-        {label}
-      </label>
-      <Field className={`${styles.field}`} name={name}>
-        {({ form, field }: any) => {
-          const { setFieldValue } = form;
-          const { value } = field;
-          return (
-            <DateView
-              className={`${styles.field}`}
-              id={name}
-              {...field}
-              {...rest}
-              selected={value}
-              onChange={(val) => setFieldValue(name, val)}
-            />
-          );
-        }}
-      </Field>
-      <ErrorMessage component="div" name={name} className={styles.errorMsg} />
-    </div>
-  );
-}
+import { getRecipeImageUploadSign } from "../../services/recipeService";
+import Multiselect from "multiselect-react-dropdown";
+import {
+  fetchIngredientsAlphabetical,
+  selectIngredients,
+} from "../../store/ingredient/ingredientSlice";
+
 const styles = {
   label: "block text-gray-700 text-sm font-bold pt-2 pb-1",
   field:
@@ -51,16 +30,27 @@ const styles = {
   errorMsg: "text-red-500 text-sm",
   checkboxLabel: "text-gray-700 text-sm font-bold pt-2 pb-1 pl-2",
 };
-const IngredientForm = () => {
+const RecipeForm = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const ingredientsList = useAppSelector(selectIngredients);
+  useEffect(() => {
+    dispatch(fetchIngredientsAlphabetical()).then(() =>
+      console.log(
+        ingredientsList.map((ingredient) => {
+          return { id: ingredient._id, name: ingredient.name };
+        })
+      )
+    );
+  }, []);
   // const onClickHandler = ()=>{
   //   alert('clicked');
   // }
-  const [ingredientUploadedFilename, setIngredientUploadedFilename] = useState("");
-  const [ingredientUploadedFilenamePublic, setIngredientUploadedFilenamePublic] = useState("");
+  const [recipeUploadedFilename, setRecipeUploadedFilename] = useState("");
+  const [recipeUploadedFilenamePublic, setRecipeUploadedFilenamePublic] =
+    useState("");
   const cloudName = `${import.meta.env.VITE_CLOUD_NAME}`; // replace with your own cloud name
-  const uploadPreset = "ingredient"; // replace with your own upload preset
+  const uploadPreset = "recipe"; // replace with your own upload preset
   const api_key = import.meta.env.VITE_CLOUDINARY_API_KEY;
   // Remove the comments from the code below to add
   // additional functionality.
@@ -68,8 +58,8 @@ const IngredientForm = () => {
   // the full list of possible parameters that you
   // can add see:
   //   https://cloudinary.com/documentation/upload_widget_reference
-  const IngredientUpload = async () => {
-    const res = await getIngredientImageUploadSign();
+  const RecipeUpload = async () => {
+    const res = await getRecipeImageUploadSign();
     console.log(res);
     var myWidget = window.cloudinary.openUploadWidget(
       {
@@ -82,8 +72,8 @@ const IngredientForm = () => {
         // showAdvancedOptions: true,  //add advanced options (public_id and tag)
         // sources: [ "local", "url"], // restrict the upload sources to URL and local files
         multiple: false, //restrict upload to a single file
-        // folder: "ingredient_attachments", //upload files to the specified folder
-        tags: ["ingredient"], //add the given tags to the uploaded files
+        // folder: "recipe_attachments", //upload files to the specified folder
+        tags: ["recipe"], //add the given tags to the uploaded files
         apiKey: api_key,
 
         // context: {alt: "user_uploaded"}, //add the given context data to the uploaded files
@@ -93,65 +83,67 @@ const IngredientForm = () => {
         // theme: "office", //change to a purple theme
         styles: {
           palette: {
-              window: "#F5F5F5",
-              sourceBg: "#FFFFFF",
-              windowBorder: "#90a0b3",
-              tabIcon: "#0094c7",
-              inactiveTabIcon: "#69778A",
-              menuIcons: "#0094C7",
-              link: "#53ad9d",
-              action: "#8F5DA5",
-              inProgress: "#0194c7",
-              complete: "#53ad9d",
-              error: "#c43737",
-              textDark: "#000000",
-              textLight: "#FFFFFF"
+            window: "#F5F5F5",
+            sourceBg: "#FFFFFF",
+            windowBorder: "#90a0b3",
+            tabIcon: "#0094c7",
+            inactiveTabIcon: "#69778A",
+            menuIcons: "#0094C7",
+            link: "#53ad9d",
+            action: "#8F5DA5",
+            inProgress: "#0194c7",
+            complete: "#53ad9d",
+            error: "#c43737",
+            textDark: "#000000",
+            textLight: "#FFFFFF",
           },
           fonts: {
-              default: null,
-              "'Poppins', sans-serif": {
-                  url: "https://fonts.googleapis.com/css?family=Poppins",
-                  active: true
-              }
-          }
-      }
+            default: null,
+            "'Poppins', sans-serif": {
+              url: "https://fonts.googleapis.com/css?family=Poppins",
+              active: true,
+            },
+          },
+        },
       },
       (error: any, result: any) => {
-        if (!error && result && result.ingredient === "success") {
+        if (!error && result && result.event === "success") {
           console.log("Done! Here is the file info: ", result.info);
-          setIngredientUploadedFilename(result.info.secure_url);
-          setIngredientUploadedFilenamePublic(result.info.public_id);
+          setRecipeUploadedFilename(result.info.secure_url);
+          setRecipeUploadedFilenamePublic(result.info.public_id);
         }
       }
     );
   };
 
-  const submitIngredient = (resumeData: any) => {
+  const submitRecipe = (resumeData: any) => {
     var newData = new FormData();
-    newData.append("title", resumeData.title);
-    newData.append("date", resumeData.date);
-    newData.append("summary", resumeData.summary);
-    newData.append("description", resumeData.description);
+    newData.append("name", resumeData.name);
+    newData.append("ingredientsRequired", resumeData.ingredientsRequired);
+    newData.append("timeToCook", resumeData.timeToCook);
+    newData.append("recipeText", resumeData.recipeText);
     newData.append("attachmentFlag", resumeData.attachmentFlag);
-    newData.append("uploadedIngredient", resumeData.uploadedIngredient);
-    newData.append("uploadedIngredientPublic", resumeData.uploadedIngredientPublic);
-    
-    dispatch(
-      submitIngredientThunk(newData)
-    ).then(() =>
-      setTimeout(() => {
-        navigate("/admin/ingredientadmin");
-      }, 1000)
-    );
+    newData.append("uploadedRecipe", resumeData.uploadedRecipe);
+    newData.append("uploadedRecipePublic", resumeData.uploadedRecipePublic);
+    dispatch(submitRecipeThunk(newData))
   };
   const formInitialValues = {
-    title: "",
-    date: "",
-    summary: "",
-    description: "",
+    name: "",
+    ingredientsRequired: [],
+    timeToCook: "",
+    recipeText: "",
     attachmentFlag: false,
-    uploadedIngredient: File,
+    uploadedRecipe: File,
   };
+  const onIngredientSelect = (selectedList: Array<{id: string, name:string}>, selectedItem:Object, name:string="ingredientsRequired", setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => void) => {
+    console.log(selectedList.map(item => {return item.id}), selectedItem)
+    setFieldValue(name, selectedList.map(item => {return item.id}))
+  }
+
+  const onIngredientRemove = (selectedList: Array<{id: string, name:string}>, selectedItem:Object, name:string="ingredientsRequired", setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => void) => {
+    console.log(selectedList.map(item => {return item.id}), selectedItem)
+    setFieldValue(name, selectedList.map(item => {return item.id}))
+  }
   return (
     <>
       <div className="modal-body relative p-4 pt-0">
@@ -159,27 +151,27 @@ const IngredientForm = () => {
           initialValues={formInitialValues}
           validate={(values) => {
             const errors: any = {};
-            if (!values.title) {
-              errors.title = "First Name is Required";
+            if (!values.name) {
+              errors.name = "Recipe Name is Required";
             }
-            if (!values.date) {
-              errors.date = "Last Name is Required";
+            if (values.ingredientsRequired.length === 0) {
+              errors.date = "At least one ingredient is Required";
             }
-            if (!values.summary) {
-              errors.summary = "Email is Required";
+            if (!values.timeToCook) {
+              errors.timeToCook = "Time to cook is Required";
             }
-            // if (!values.description) {
-            //   errors.description = "Mobile is Required";
+            // if (!values.recipeText) {
+            //   errors.recipeText = "Mobile is Required";
             // }
             if (
               values.attachmentFlag &&
-              (!values.uploadedIngredient ||
-                values.uploadedIngredient === null ||
-                document.getElementById("uploadedIngredient") !== null)
+              (!values.uploadedRecipe ||
+                values.uploadedRecipe === null ||
+                document.getElementById("uploadedRecipe") !== null)
             ) {
               {
-                console.log(values.uploadedIngredient);
-                errors.uploadedIngredient = "Email is Required";
+                console.log(values.uploadedRecipe);
+                errors.uploadedRecipe = "Uploaded Image is Required";
               }
             }
 
@@ -190,35 +182,38 @@ const IngredientForm = () => {
             console.log(values);
 
             if (!values.attachmentFlag) {
-              submitIngredient({
+              console.log("Test1")
+              submitRecipe({
                 ...values,
                 attachmentFlag: false,
-                uploadedIngredient: "",
-                uploadedIngredientPublic: "",
+                uploadedRecipe: "",
+                uploadedRecipePublic: "",
               });
-            } 
-            else if(ingredientUploadedFilename === ""){
-              setSubmitting(true);
-            }
-            else {
-              
-              // const parts = values.uploadedIngredient.name.split(".");
-              // const ext = values.uploadedIngredient.name.slice(
-              //   values.uploadedIngredient.name.length -
+            } else if (recipeUploadedFilename === "") {
+              console.log("recipeUploadedFilename", recipeUploadedFilename)
+              setSubmitting(false);
+            } else {
+              console.log("Test3")
+
+              // const parts = values.uploadedRecipe.name.split(".");
+              // const ext = values.uploadedRecipe.name.slice(
+              //   values.uploadedRecipe.name.length -
               //     parts[parts.length - 1].length
               // );
-              // const name = values.uploadedIngredient.name.slice(
+              // const name = values.uploadedRecipe.name.slice(
               //   0,
-              //   values.uploadedIngredient.name.length - ext.length - 1
+              //   values.uploadedRecipe.name.length - ext.length - 1
               // );
               // const newName = Date.now() + "-" + name + "." + ext;
-              submitIngredient({
+              submitRecipe({
                 ...values,
                 attachmentFlag: true,
-                uploadedIngredient: ingredientUploadedFilename,
-                uploadedIngredientPublic: ingredientUploadedFilenamePublic,
+                uploadedRecipe: recipeUploadedFilename,
+                uploadedRecipePublic: recipeUploadedFilenamePublic,
               });
             }
+            setSubmitting(false);
+
           }}
         >
           {({
@@ -231,72 +226,84 @@ const IngredientForm = () => {
           }) => (
             <Form className="form-training">
               <div className="form-group row py-sm-1 px-sm-3">
-                <label className={styles.label} htmlFor="title">
-                  Title<span className={styles.errorMsg}>*</span>
+                <label className={styles.label} htmlFor="name">
+                  Name<span className={styles.errorMsg}>*</span>
                 </label>
                 <Field
                   className={`${styles.field} ${
-                    touched.title && errors.title ? "is-invalid" : ""
+                    touched.name && errors.name ? "is-invalid" : ""
                   }`}
                   type="text"
-                  name="title"
-                  placeholder="Title"
+                  name="name"
+                  placeholder="Recipe Name"
                 />
                 <ErrorMessage
-                  name="title"
+                  name="name"
                   component="span"
                   className={styles.errorMsg}
                 />
               </div>
               <div className="form-group row py-sm-1 px-sm-3">
-                <label className={styles.label} htmlFor="summary">
-                  Summary<span className={styles.errorMsg}>*</span>
+                <label className={styles.label} htmlFor="timeToCook">
+                  Time To Cook<span className={styles.errorMsg}>*</span>
                 </label>
                 <Field
                   className={`${styles.field} ${
-                    touched.summary && errors.summary ? "is-invalid" : ""
+                    touched.timeToCook && errors.timeToCook ? "is-invalid" : ""
                   }`}
                   type="text"
-                  name="summary"
-                  placeholder="Summary"
+                  name="timeToCook"
+                  placeholder="Time To Cook"
                 />
                 <ErrorMessage
-                  name="summary"
+                  name="timeToCook"
                   component="span"
                   className={styles.errorMsg}
                 />
               </div>
               <div className="form-group row py-sm-2 px-sm-3">
-                <label className={styles.label} htmlFor="description">
-                  Description
+                <label className={styles.label} htmlFor="recipeText">
+                  Recipe Text
                   {/* <span className={styles.errorMsg}>*</span> */}
                 </label>
                 <Field
                   className={`${styles.field} ${
-                    touched.description && errors.description
-                      ? "is-invalid"
-                      : ""
+                    touched.recipeText && errors.recipeText ? "is-invalid" : ""
                   }`}
                   component="textarea"
                   rows="4"
-                  name="description"
-                  placeholder="Description"
+                  name="recipeText"
+                  placeholder="Recipe Text"
                 />
 
                 <ErrorMessage
-                  name="description"
+                  name="recipeText"
                   component="div"
                   className={styles.errorMsg}
                 />
               </div>
-              <DatePicker
-                name="date"
-                label={
-                  <>
-                    Date<span className={styles.errorMsg}>*</span>
-                  </>
-                }
-              />
+              <div className="form-group row py-sm-2 px-sm-3">
+                <label className={styles.label} htmlFor="ingredientsRequired">
+                  Ingredients Required<span className={styles.errorMsg}>*</span>
+                </label>
+                <Multiselect
+                  id="ingredientsRequired"
+                  className="py-2"
+                  options={ingredientsList.map((ingredient) => {
+                    return { id: ingredient._id, name: ingredient.name };
+                  })}
+                  onSelect={(selectedList, selectedItem) => onIngredientSelect(selectedList, selectedItem, "ingredientsRequired", setFieldValue)} // Function will trigger on select event
+                  onRemove={(selectedList, selectedItem) => onIngredientRemove(selectedList, selectedItem, "ingredientsRequired", setFieldValue)} // Function will trigger on remove event
+                  displayValue="name" // Property name to display in the dropdown options
+                />
+
+                <ErrorMessage
+                  name="ingredientsRequired"
+                  component="div"
+                  className={styles.errorMsg}
+                />
+              </div>
+
               <div className="form-group row py-sm-1 px-sm-3">
                 <label className={styles.label}>
                   <Field
@@ -308,10 +315,10 @@ const IngredientForm = () => {
                     type="checkbox"
                     name="attachmentFlag"
                   />
-                  <span className={styles.checkboxLabel}>Upload Ingredient</span>
+                  <span className={styles.checkboxLabel}>Upload Recipe</span>
                 </label>
                 <ErrorMessage
-                  name="summary"
+                  name="timeToCook"
                   component="span"
                   className={styles.errorMsg}
                 />
@@ -319,46 +326,33 @@ const IngredientForm = () => {
               {values.attachmentFlag && (
                 <div className="form-group row py-sm-2 px-sm-3">
                   <button
-                    id="ingredient_upload_widget"
+                    id="recipe_upload_widget"
                     className={`${styles.field}`}
-                    onClick={(e) => {e.preventDefault(); IngredientUpload();}}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      RecipeUpload();
+                    }}
                   >
                     Upload
                   </button>
-                  <label className={`${styles.label} font-normal`}>
-                    
-                    {ingredientUploadedFilename !== "" && <p>File uploaded at <a className="font-bold text-blue-500" href={ingredientUploadedFilename}>{ingredientUploadedFilename}</a></p>}
-                  </label>
-                  {/* <IngredientUploadWidget
-                    classNameProp={`${styles.field} ${
-                      touched.uploadedIngredient && errors.uploadedIngredient
-                        ? "is-invalid"
-                        : ""
-                    } `}
-                    setIngredientUploadedFilename={setIngredientUploadedFilename}
-                  /> */}
-
-                  {/* <input
-                    id="uploadedIngredient"
-                    name="uploadedIngredient"
-                    type="file"
-                    onChange={(ingredient) => {
-                      setFieldValue(
-                        "uploadedIngredient",
-                        ingredient.currentTarget.files![0]
-                      );
-                    }}
-                    className={`${styles.field} ${
-                      touched.uploadedIngredient && errors.uploadedIngredient
-                        ? "is-invalid"
-                        : ""
-                    } `}
-                  /> */}
                   <ErrorMessage
-                    name="uploadedIngredient"
+                    name="uploadedRecipe"
                     component="div"
                     className={styles.errorMsg}
                   />
+                  <label className={`${styles.label} font-normal`}>
+                  {recipeUploadedFilename !== "" && (
+                    <p>
+                      File uploaded at{" "}
+                      <a
+                        className="font-bold text-blue-500"
+                        href={recipeUploadedFilename}
+                      >
+                        {recipeUploadedFilename}
+                      </a>
+                    </p>
+                  )}
+                </label>
                 </div>
               )}
 
@@ -422,4 +416,4 @@ const IngredientForm = () => {
   );
 };
 
-export default IngredientForm;
+export default RecipeForm;
