@@ -17,7 +17,7 @@ import { Button, PageButton } from "./shared/Button";
 import { classNames } from "./shared/Utils";
 import { SortIcon, SortUpIcon, SortDownIcon } from "./shared/Icons";
 import { useAppDispatch } from "../../store";
-import { deleteIngredientThunk } from "../../store/ingredient/ingredientSlice";
+import { deleteIngredientThunk, setEditIngredientId } from "../../store/ingredient/ingredientSlice";
 
 // Define a default UI for filtering
 function GlobalFilter({
@@ -230,8 +230,12 @@ export function EditIngredient({ value, column, row }: any) {
       <button
         type="button"
         onClick={() => {
-          console.log("Edit MOdal", row.original[column.editAccessor]);
+          console.log("Edit Modal", row.original[column.editAccessor]);
+          dispatch(setEditIngredientId(row.original[column.editAccessor]));
         }}
+        data-mdb-ripple="true"
+        data-bs-toggle="modal"
+        data-bs-target={`#ingredientModalEdit`}
       >
         Edit
       </button>

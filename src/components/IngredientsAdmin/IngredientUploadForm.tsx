@@ -15,33 +15,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
 import { Cloudinary } from "@cloudinary/url-gen/instance/Cloudinary";
 import { getIngredientImageUploadSign } from "../../services/ingredientService";
-function DatePicker(props: any) {
-  const { label, name, ...rest } = props;
-  return (
-    <div className="form-group row py-sm-2 px-sm-3">
-      <label className={styles.label} htmlFor={name}>
-        {label}
-      </label>
-      <Field className={`${styles.field}`} name={name}>
-        {({ form, field }: any) => {
-          const { setFieldValue } = form;
-          const { value } = field;
-          return (
-            <DateView
-              className={`${styles.field}`}
-              id={name}
-              {...field}
-              {...rest}
-              selected={value}
-              onChange={(val) => setFieldValue(name, val)}
-            />
-          );
-        }}
-      </Field>
-      <ErrorMessage component="div" name={name} className={styles.errorMsg} />
-    </div>
-  );
-}
+
 const styles = {
   label: "block text-gray-700 text-sm font-bold pt-2 pb-1",
   field:
@@ -57,8 +31,12 @@ const IngredientForm = () => {
   // const onClickHandler = ()=>{
   //   alert('clicked');
   // }
-  const [ingredientUploadedFilename, setIngredientUploadedFilename] = useState("");
-  const [ingredientUploadedFilenamePublic, setIngredientUploadedFilenamePublic] = useState("");
+  const [ingredientUploadedFilename, setIngredientUploadedFilename] =
+    useState("");
+  const [
+    ingredientUploadedFilenamePublic,
+    setIngredientUploadedFilenamePublic,
+  ] = useState("");
   const cloudName = `${import.meta.env.VITE_CLOUD_NAME}`; // replace with your own cloud name
   const uploadPreset = "ingredient"; // replace with your own upload preset
   const api_key = import.meta.env.VITE_CLOUDINARY_API_KEY;
@@ -93,31 +71,31 @@ const IngredientForm = () => {
         // theme: "office", //change to a purple theme
         styles: {
           palette: {
-              window: "#F5F5F5",
-              sourceBg: "#FFFFFF",
-              windowBorder: "#90a0b3",
-              tabIcon: "#0094c7",
-              inactiveTabIcon: "#69778A",
-              menuIcons: "#0094C7",
-              link: "#53ad9d",
-              action: "#8F5DA5",
-              inProgress: "#0194c7",
-              complete: "#53ad9d",
-              error: "#c43737",
-              textDark: "#000000",
-              textLight: "#FFFFFF"
+            window: "#F5F5F5",
+            sourceBg: "#FFFFFF",
+            windowBorder: "#90a0b3",
+            tabIcon: "#0094c7",
+            inactiveTabIcon: "#69778A",
+            menuIcons: "#0094C7",
+            link: "#53ad9d",
+            action: "#8F5DA5",
+            inProgress: "#0194c7",
+            complete: "#53ad9d",
+            error: "#c43737",
+            textDark: "#000000",
+            textLight: "#FFFFFF",
           },
           fonts: {
-              default: null,
-              "'Poppins', sans-serif": {
-                  url: "https://fonts.googleapis.com/css?family=Poppins",
-                  active: true
-              }
-          }
-      }
+            default: null,
+            "'Poppins', sans-serif": {
+              url: "https://fonts.googleapis.com/css?family=Poppins",
+              active: true,
+            },
+          },
+        },
       },
       (error: any, result: any) => {
-        if (!error && result && result.ingredient === "success") {
+        if (!error && result && result.event === "success") {
           console.log("Done! Here is the file info: ", result.info);
           setIngredientUploadedFilename(result.info.secure_url);
           setIngredientUploadedFilenamePublic(result.info.public_id);
@@ -128,27 +106,25 @@ const IngredientForm = () => {
 
   const submitIngredient = (resumeData: any) => {
     var newData = new FormData();
-    newData.append("title", resumeData.title);
-    newData.append("date", resumeData.date);
-    newData.append("summary", resumeData.summary);
-    newData.append("description", resumeData.description);
+    newData.append("name", resumeData.name);
+    newData.append("category", resumeData.category);
     newData.append("attachmentFlag", resumeData.attachmentFlag);
-    newData.append("uploadedIngredient", resumeData.uploadedIngredient);
-    newData.append("uploadedIngredientPublic", resumeData.uploadedIngredientPublic);
-    
-    dispatch(
-      submitIngredientThunk(newData)
-    ).then(() =>
-      setTimeout(() => {
-        navigate("/admin/ingredientadmin");
-      }, 1000)
+    newData.append("uploadedIngredientImage", resumeData.uploadedIngredient);
+    newData.append(
+      "uploadedIngredientImagePublic",
+      resumeData.uploadedIngredientPublic
     );
+
+    dispatch(submitIngredientThunk(newData))
+    // .then(() =>
+    //   setTimeout(() => {
+    //     navigate("/admin/ingredientadmin");
+    //   }, 1000)
+    // );
   };
   const formInitialValues = {
-    title: "",
-    date: "",
-    summary: "",
-    description: "",
+    name: "",
+    category: "",
     attachmentFlag: false,
     uploadedIngredient: File,
   };
@@ -159,18 +135,12 @@ const IngredientForm = () => {
           initialValues={formInitialValues}
           validate={(values) => {
             const errors: any = {};
-            if (!values.title) {
-              errors.title = "First Name is Required";
+            if (!values.name) {
+              errors.name = "Name is Required";
             }
-            if (!values.date) {
-              errors.date = "Last Name is Required";
+            if (!values.category) {
+              errors.category = "Category is Required";
             }
-            if (!values.summary) {
-              errors.summary = "Email is Required";
-            }
-            // if (!values.description) {
-            //   errors.description = "Mobile is Required";
-            // }
             if (
               values.attachmentFlag &&
               (!values.uploadedIngredient ||
@@ -196,22 +166,9 @@ const IngredientForm = () => {
                 uploadedIngredient: "",
                 uploadedIngredientPublic: "",
               });
-            } 
-            else if(ingredientUploadedFilename === ""){
+            } else if (ingredientUploadedFilename === "") {
               setSubmitting(true);
-            }
-            else {
-              
-              // const parts = values.uploadedIngredient.name.split(".");
-              // const ext = values.uploadedIngredient.name.slice(
-              //   values.uploadedIngredient.name.length -
-              //     parts[parts.length - 1].length
-              // );
-              // const name = values.uploadedIngredient.name.slice(
-              //   0,
-              //   values.uploadedIngredient.name.length - ext.length - 1
-              // );
-              // const newName = Date.now() + "-" + name + "." + ext;
+            } else {
               submitIngredient({
                 ...values,
                 attachmentFlag: true,
@@ -219,6 +176,7 @@ const IngredientForm = () => {
                 uploadedIngredientPublic: ingredientUploadedFilenamePublic,
               });
             }
+            setSubmitting(false);
           }}
         >
           {({
@@ -231,72 +189,59 @@ const IngredientForm = () => {
           }) => (
             <Form className="form-training">
               <div className="form-group row py-sm-1 px-sm-3">
-                <label className={styles.label} htmlFor="title">
-                  Title<span className={styles.errorMsg}>*</span>
+                <label className={styles.label} htmlFor="name">
+                  Name<span className={styles.errorMsg}>*</span>
                 </label>
                 <Field
                   className={`${styles.field} ${
-                    touched.title && errors.title ? "is-invalid" : ""
+                    touched.name && errors.name ? "is-invalid" : ""
                   }`}
                   type="text"
-                  name="title"
-                  placeholder="Title"
+                  name="name"
+                  placeholder="Name"
                 />
                 <ErrorMessage
-                  name="title"
-                  component="span"
-                  className={styles.errorMsg}
-                />
-              </div>
-              <div className="form-group row py-sm-1 px-sm-3">
-                <label className={styles.label} htmlFor="summary">
-                  Summary<span className={styles.errorMsg}>*</span>
-                </label>
-                <Field
-                  className={`${styles.field} ${
-                    touched.summary && errors.summary ? "is-invalid" : ""
-                  }`}
-                  type="text"
-                  name="summary"
-                  placeholder="Summary"
-                />
-                <ErrorMessage
-                  name="summary"
+                  name="name"
                   component="span"
                   className={styles.errorMsg}
                 />
               </div>
               <div className="form-group row py-sm-2 px-sm-3">
-                <label className={styles.label} htmlFor="description">
-                  Description
-                  {/* <span className={styles.errorMsg}>*</span> */}
+                <label className={styles.label} htmlFor="category">
+                  category
                 </label>
                 <Field
                   className={`${styles.field} ${
-                    touched.description && errors.description
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  component="textarea"
-                  rows="4"
-                  name="description"
-                  placeholder="Description"
-                />
+                    touched.category && errors.category ? "is-invalid" : ""
+                  } form-select appearance-none
+                  block
+                  w-full
+                  px-2
+                  py-1
+                  text-base
+                  font-normal
+                  text-gray-700
+                  bg-white bg-clip-padding bg-no-repeat
+                  border border-solid border-gray-300
+                  rounded
+                  transition
+                  ease-in-out
+                  m-0
+                  focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none`}
+                  component="select"
+                  name="category"
+                >
+                  <option value="">Select </option>
+                  <option value="Non-Veg" className="rounded-full shadow-sm text-red-700 bg-red-100">Non-Veg</option>
+                  <option value="Veg" className="rounded-full shadow-sm text-teal-700 bg-teal-100">Veg</option>
+                </Field>
 
                 <ErrorMessage
-                  name="description"
+                  name="category"
                   component="div"
                   className={styles.errorMsg}
                 />
               </div>
-              <DatePicker
-                name="date"
-                label={
-                  <>
-                    Date<span className={styles.errorMsg}>*</span>
-                  </>
-                }
-              />
               <div className="form-group row py-sm-1 px-sm-3">
                 <label className={styles.label}>
                   <Field
@@ -308,10 +253,12 @@ const IngredientForm = () => {
                     type="checkbox"
                     name="attachmentFlag"
                   />
-                  <span className={styles.checkboxLabel}>Upload Ingredient</span>
+                  <span className={styles.checkboxLabel}>
+                    Upload Ingredient
+                  </span>
                 </label>
                 <ErrorMessage
-                  name="summary"
+                  name="attachmentFlag"
                   component="span"
                   className={styles.errorMsg}
                 />
@@ -321,39 +268,26 @@ const IngredientForm = () => {
                   <button
                     id="ingredient_upload_widget"
                     className={`${styles.field}`}
-                    onClick={(e) => {e.preventDefault(); IngredientUpload();}}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      IngredientUpload();
+                    }}
                   >
                     Upload
                   </button>
                   <label className={`${styles.label} font-normal`}>
-                    
-                    {ingredientUploadedFilename !== "" && <p>File uploaded at <a className="font-bold text-blue-500" href={ingredientUploadedFilename}>{ingredientUploadedFilename}</a></p>}
+                    {ingredientUploadedFilename !== "" && (
+                      <p>
+                        File uploaded at{" "}
+                        <a
+                          className="font-bold text-blue-500"
+                          href={ingredientUploadedFilename}
+                        >
+                          {ingredientUploadedFilename}
+                        </a>
+                      </p>
+                    )}
                   </label>
-                  {/* <IngredientUploadWidget
-                    classNameProp={`${styles.field} ${
-                      touched.uploadedIngredient && errors.uploadedIngredient
-                        ? "is-invalid"
-                        : ""
-                    } `}
-                    setIngredientUploadedFilename={setIngredientUploadedFilename}
-                  /> */}
-
-                  {/* <input
-                    id="uploadedIngredient"
-                    name="uploadedIngredient"
-                    type="file"
-                    onChange={(ingredient) => {
-                      setFieldValue(
-                        "uploadedIngredient",
-                        ingredient.currentTarget.files![0]
-                      );
-                    }}
-                    className={`${styles.field} ${
-                      touched.uploadedIngredient && errors.uploadedIngredient
-                        ? "is-invalid"
-                        : ""
-                    } `}
-                  /> */}
                   <ErrorMessage
                     name="uploadedIngredient"
                     component="div"

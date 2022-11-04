@@ -34,7 +34,7 @@ const IngredientView = () => {
         </h3>
         <div className="max-w-full w-full   bg-white border rounded-md  max-h-full ">
           {
-            loadingState === "pending" &&
+            loadingState === "pendingOne" &&
             Array(1)
               .fill({})
               .map((ingredient, idx) => {
@@ -81,7 +81,7 @@ const IngredientView = () => {
               })
           }
         </div>
-        {loadingState === "succeeded" && ingredient.name === "" && (
+        {loadingState === "succeededOne" && ingredient.name === "" && (
           <p>No ingredients present</p>
         )}
         <div className="max-w-full w-full   bg-white border rounded-md   max-h-full ">

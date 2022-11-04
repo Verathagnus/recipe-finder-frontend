@@ -45,6 +45,7 @@ export interface IIngredientState {
   loading: string;
   ingredientFound: IngredientGetType;
   ingredientsCount: number;
+  editIngredientId: string;
 }
 
 export interface IRecipeState {

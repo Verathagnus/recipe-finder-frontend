@@ -96,7 +96,7 @@ const RecipesView = () => {
         {loadingState === "succeeded" && recipesList.length === 0 && (
           <p>No ingredients present</p>
         )}
-        <div className="grid lg:grid-cols-2 lg:gap-4">
+        <div className="grid lg:grid-cols-2 lg:gap-4 ">
           {recipesList &&
             recipesList.map((recipe) => {
               return (
@@ -144,10 +144,10 @@ const RecipesView = () => {
                             <p className="text-red-600">Non-Veg</p>
                           )}
                         </div>
-                        <div className="text-gray-900 font-bold text-xl">
+                        <div className="text-gray-900 font-bold text-xl whitespace-pre-line overflow-auto">
                           {recipe.name}
                         </div>
-                        <p className="text-gray-700 text-base">
+                        <p className="text-gray-700 text-base whitespace-pre-line overflow-clip">
                           {recipe.recipeText.length > 50 ? <>{recipe.recipeText.slice(0, 50)} <span className="text-teal-400 hover:text-blue-400">... Read More</span></> : recipe.recipeText}
                         </p>
                       </div>
@@ -159,6 +159,7 @@ const RecipesView = () => {
                             onClick={() => {
                               ingredientModalHandler(ingredient._id);
                             }}
+                            key={ingredient._id}
                           >
                             <div
                               className="flex items-center py-2"
@@ -174,7 +175,7 @@ const RecipesView = () => {
                                 alt={ingredient.name}
                               />
                               <div className="text-sm">
-                                <p className="text-gray-900 leading-none">
+                                <p className="text-gray-900 leading-none whitespace-pre-line overflow-auto">
                                   {ingredient.name}
                                 </p>
                                 <div className="">

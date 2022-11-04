@@ -1,0 +1,415 @@
+import React, { useState, useEffect } from "react";
+import {
+  Formik,
+  Form,
+  Field,
+  ErrorMessage,
+  useField,
+  useFormikContext,
+} from "formik";
+import FormData from "form-data";
+import { useAppDispatch, useAppSelector } from "../../store";
+import {
+  fetchIngredient,
+  selectEditIngredientId,
+  selectIngredient,
+  selectLoading,
+  submitIngredientThunk,
+  updateIngredientThunk,
+} from "../../store/ingredient/ingredientSlice";
+import DateView from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { useNavigate } from "react-router-dom";
+import { Cloudinary } from "@cloudinary/url-gen/instance/Cloudinary";
+import { getIngredientImageUploadSign } from "../../services/ingredientService";
+
+const styles = {
+  label: "block text-gray-700 text-sm font-bold pt-2 pb-1",
+  field:
+    "bg-gray-100 text-gray-700 focus:outline-none focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full appearance-none",
+  button:
+    " bg-gray-700 text-white font-bold py-2 px-4 w-full rounded hover:bg-gray-600",
+  errorMsg: "text-red-500 text-sm",
+  checkboxLabel: "text-gray-700 text-sm font-bold pt-2 pb-1 pl-2",
+};
+const IngredientEditForm = ({ editIngredientId }: any) => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const editIngredient = useAppSelector(selectIngredient);
+  const [ingredientUploadedFilename, setIngredientUploadedFilename] =
+    useState("");
+  const [
+    ingredientUploadedFilenamePublic,
+    setIngredientUploadedFilenamePublic,
+  ] = useState("");
+  const [loadingFiles, setLoadingFiles] = useState("loading");
+  const loadingState = useAppSelector(selectLoading);
+  useEffect(() => {
+    setLoadingFiles("loading");
+    if (editIngredientId !== "") dispatch(fetchIngredient(editIngredientId));
+  }, [editIngredientId]);
+  useEffect(() => {
+    console.log(editIngredient);
+    setLoadingFiles("loading");
+    setIngredientUploadedFilename(editIngredient.uploadedIngredientImage);
+    setIngredientUploadedFilenamePublic(
+      editIngredient.uploadedIngredientImagePublicId
+    );
+    setLoadingFiles("success");
+  }, [editIngredient]);
+  const cloudName = `${import.meta.env.VITE_CLOUD_NAME}`; // replace with your own cloud name
+  const uploadPreset = "ingredient"; // replace with your own upload preset
+  const api_key = import.meta.env.VITE_CLOUDINARY_API_KEY;
+  // Remove the comments from the code below to add
+  // additional functionality.
+  // Note that these are only a few examples, to see
+  // the full list of possible parameters that you
+  // can add see:
+  //   https://cloudinary.com/documentation/upload_widget_reference
+  const IngredientUpload = async () => {
+    const res = await getIngredientImageUploadSign();
+    console.log(res);
+    var myWidget = window.cloudinary.openUploadWidget(
+      {
+        cloudName: cloudName,
+        uploadPreset: uploadPreset,
+        uploadSignatureTimestamp: res.data.timestamp,
+        uploadSignature: res.data.signature,
+        cropping: false,
+        // cropping: true, //add a cropping step
+        // showAdvancedOptions: true,  //add advanced options (public_id and tag)
+        // sources: [ "local", "url"], // restrict the upload sources to URL and local files
+        multiple: false, //restrict upload to a single file
+        // folder: "ingredient_attachments", //upload files to the specified folder
+        tags: ["ingredient"], //add the given tags to the uploaded files
+        apiKey: api_key,
+
+        // context: {alt: "user_uploaded"}, //add the given context data to the uploaded files
+        // clientAllowedFormats: ["images"], //restrict uploading to image files only
+        // maxImageFileSize: 2000000,  //restrict file size to less than 2MB
+        // maxImageWidth: 2000, //Scales the image down to a width of 2000 pixels before uploading
+        // theme: "office", //change to a purple theme
+        styles: {
+          palette: {
+            window: "#F5F5F5",
+            sourceBg: "#FFFFFF",
+            windowBorder: "#90a0b3",
+            tabIcon: "#0094c7",
+            inactiveTabIcon: "#69778A",
+            menuIcons: "#0094C7",
+            link: "#53ad9d",
+            action: "#8F5DA5",
+            inProgress: "#0194c7",
+            complete: "#53ad9d",
+            error: "#c43737",
+            textDark: "#000000",
+            textLight: "#FFFFFF",
+          },
+          fonts: {
+            default: null,
+            "'Poppins', sans-serif": {
+              url: "https://fonts.googleapis.com/css?family=Poppins",
+              active: true,
+            },
+          },
+        },
+      },
+      (error: any, result: any) => {
+        if (!error && result && result.event === "success") {
+          console.log("Done! Here is the file info: ", result.info);
+          setIngredientUploadedFilename(result.info.secure_url);
+          setIngredientUploadedFilenamePublic(result.info.public_id);
+        }
+      }
+    );
+  };
+
+  const submitIngredient = (resumeData: any) => {
+    var newData = new FormData();
+    newData.append("_id", editIngredient._id);
+    newData.append("name", resumeData.name);
+    newData.append("category", resumeData.category);
+    newData.append("attachmentFlag", resumeData.attachmentFlag);
+    newData.append("uploadedIngredientImage", resumeData.uploadedIngredient);
+    newData.append(
+      "uploadedIngredientImagePublic",
+      resumeData.uploadedIngredientPublic
+    );
+
+    dispatch(updateIngredientThunk(newData));
+  };
+  const formInitialValues = {
+    name: editIngredient.name,
+    category: editIngredient.category,
+    attachmentFlag: editIngredient.attachmentFlag,
+    uploadedIngredient: File,
+  };
+  return (
+    <>
+      {loadingFiles !== "success" && (
+        <div className="modal-body relative p-20 text-center" role="status">
+          <svg
+            className="inline-block mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-400 fill-teal-500 mx-auto"
+            viewBox="0 0 100 101"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+              fill="currentColor"
+            />
+            <path
+              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+              fill="currentFill"
+            />
+          </svg>
+          <span className="sr-only">Loading...</span>
+        </div>
+      )}
+      {editIngredientId &&
+        loadingState === "succeeded" &&
+        loadingFiles === "success" && (
+          <>
+            <div className="modal-body relative p-4 pt-0">
+              <Formik
+                initialValues={formInitialValues}
+                validate={(values) => {
+                  const errors: any = {};
+                  if (!values.name) {
+                    errors.name = "Name is Required";
+                  }
+                  if (!values.category) {
+                    errors.category = "Category is Required";
+                  }
+                  if (
+                    values.attachmentFlag &&
+                    (!values.uploadedIngredient ||
+                      values.uploadedIngredient === null ||
+                      document.getElementById("uploadedIngredient") !== null)
+                  ) {
+                    {
+                      console.log(values.uploadedIngredient);
+                      errors.uploadedIngredient = "Email is Required";
+                    }
+                  }
+
+                  return errors;
+                }}
+                onSubmit={(values, { setSubmitting }) => {
+                  setSubmitting(false);
+                  console.log(values);
+
+                  if (!values.attachmentFlag) {
+                    submitIngredient({
+                      ...values,
+                      attachmentFlag: false,
+                      uploadedIngredient: "",
+                      uploadedIngredientPublic: "",
+                    });
+                  } else if (ingredientUploadedFilename === "") {
+                    setSubmitting(true);
+                  } else {
+                    submitIngredient({
+                      ...values,
+                      attachmentFlag: true,
+                      uploadedIngredient: ingredientUploadedFilename,
+                      uploadedIngredientPublic:
+                        ingredientUploadedFilenamePublic,
+                    });
+                  }
+                  setSubmitting(false);
+                }}
+              >
+                {({
+                  values,
+                  isSubmitting,
+                  isValid,
+                  errors,
+                  touched,
+                  setFieldValue,
+                }) => (
+                  <Form className="form-training">
+                    <div className="form-group row py-sm-1 px-sm-3">
+                      <label className={styles.label} htmlFor="name">
+                        Name<span className={styles.errorMsg}>*</span>
+                      </label>
+                      <Field
+                        className={`${styles.field} ${
+                          touched.name && errors.name ? "is-invalid" : ""
+                        }`}
+                        type="text"
+                        name="name"
+                        placeholder="Name"
+                      />
+                      <ErrorMessage
+                        name="name"
+                        component="span"
+                        className={styles.errorMsg}
+                      />
+                    </div>
+                    <div className="form-group row py-sm-2 px-sm-3">
+                      <label className={styles.label} htmlFor="category">
+                        category
+                      </label>
+                      <Field
+                        className={`${styles.field} ${
+                          touched.category && errors.category
+                            ? "is-invalid"
+                            : ""
+                        } form-select appearance-none
+                  block
+                  w-full
+                  px-2
+                  py-1
+                  text-base
+                  font-normal
+                  text-gray-700
+                  bg-white bg-clip-padding bg-no-repeat
+                  border border-solid border-gray-300
+                  rounded
+                  transition
+                  ease-in-out
+                  m-0
+                  focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none`}
+                        component="select"
+                        name="category"
+                      >
+                        <option value="">Select </option>
+                        <option
+                          value="Non-Veg"
+                          className="rounded-full shadow-sm text-red-700 bg-red-100"
+                        >
+                          Non-Veg
+                        </option>
+                        <option
+                          value="Veg"
+                          className="rounded-full shadow-sm text-teal-700 bg-teal-100"
+                        >
+                          Veg
+                        </option>
+                      </Field>
+
+                      <ErrorMessage
+                        name="category"
+                        component="div"
+                        className={styles.errorMsg}
+                      />
+                    </div>
+                    <div className="form-group row py-sm-1 px-sm-3">
+                      <label className={styles.label}>
+                        <Field
+                          className={`${
+                            touched.attachmentFlag && errors.attachmentFlag
+                              ? "is-invalid"
+                              : ""
+                          }`}
+                          type="checkbox"
+                          name="attachmentFlag"
+                        />
+                        <span className={styles.checkboxLabel}>
+                          Upload Ingredient
+                        </span>
+                      </label>
+                      <ErrorMessage
+                        name="attachmentFlag"
+                        component="span"
+                        className={styles.errorMsg}
+                      />
+                    </div>
+                    {values.attachmentFlag && (
+                      <div className="form-group row py-sm-2 px-sm-3">
+                        <button
+                          id="ingredient_upload_widget"
+                          className={`${styles.field}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            IngredientUpload();
+                          }}
+                        >
+                          Upload
+                        </button>
+                        <label className={`${styles.label} font-normal`}>
+                          {loadingFiles === "success" &&
+                            ingredientUploadedFilename !== "" && (
+                              <p>
+                                File uploaded at{" "}
+                                <a
+                                  className="font-bold text-blue-500"
+                                  href={ingredientUploadedFilename}
+                                >
+                                  {ingredientUploadedFilename}
+                                </a>
+                              </p>
+                            )}
+                        </label>
+                        <ErrorMessage
+                          name="uploadedIngredient"
+                          component="div"
+                          className={styles.errorMsg}
+                        />
+                      </div>
+                    )}
+
+                    <div className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
+                      <button
+                        type="button"
+                        className="px-6
+          py-2.5
+          bg-purple-600
+          text-white
+          font-medium
+          text-xs
+          leading-tight
+          uppercase
+          rounded
+          shadow-md
+          hover:bg-purple-700 hover:shadow-lg
+          focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0
+          active:bg-purple-800 active:shadow-lg
+          transition
+          duration-150
+          ease-in-out"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-6
+                        py-2.5
+                        bg-blue-600
+                        text-white
+                        font-medium
+                        text-xs
+                        leading-tight
+                        uppercase
+                        rounded
+                        shadow-md
+                        hover:bg-blue-700 hover:shadow-lg
+                        focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0
+                        active:bg-blue-800 active:shadow-lg
+                        transition
+                        duration-150
+                        ease-in-out
+                        ml-1"
+                        disabled={isSubmitting}
+                        style={{
+                          backgroundColor: "rgba(37, 117, 252, 1)",
+                          color: "white",
+                        }}
+                        // data-bs-dismiss="modal"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
+            </div>
+          </>
+        )}
+    </>
+  );
+};
+
+export default IngredientEditForm;

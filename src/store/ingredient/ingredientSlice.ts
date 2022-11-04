@@ -15,8 +15,6 @@ import {
 import FormData from "form-data";
 import { IIngredientState } from "../../types/types";
 
-
-
 export const fetchIngredientsPopular = createAsyncThunk(
   "ingredient/fetchIngredientsPopular",
   async () => {
@@ -78,7 +76,8 @@ export const updateIngredientThunk = createAsyncThunk(
     }
   }
 );
-const emptyIngredient = {_id: "",
+const emptyIngredient = {
+  _id: "",
   name: "",
   category: "",
   ingredientText: "",
@@ -87,13 +86,14 @@ const emptyIngredient = {_id: "",
   uploadedIngredientImagePublicId: "",
   filter_plus: 0,
   filter_minus: 0,
-  popularity: 0
+  popularity: 0,
 };
 const initialState = {
   ingredients: [],
   loading: "idle",
   ingredientFound: emptyIngredient,
   ingredientsCount: 0,
+  editIngredientId: "",
 } as IIngredientState;
 
 const ingredientSlice = createSlice({
@@ -102,6 +102,9 @@ const ingredientSlice = createSlice({
   reducers: {
     clearIngredientFound: (state, action) => {
       state.ingredientFound = emptyIngredient;
+    },
+    setEditIngredientId: (state, action) => {
+      state.editIngredientId = action.payload;
     },
   },
   extraReducers: (builder: ActionReducerMapBuilder<IIngredientState>) => {
@@ -166,7 +169,8 @@ const ingredientSlice = createSlice({
   },
 });
 
-export const { clearIngredientFound } = ingredientSlice.actions;
+export const { clearIngredientFound, setEditIngredientId } =
+  ingredientSlice.actions;
 
 export const selectIngredients = (state: RootState) =>
   state.ingredient.ingredients;
@@ -175,7 +179,8 @@ export const selectIngredient = (state: RootState) =>
   state.ingredient.ingredientFound;
 export const selectIngredientCount = (state: RootState) =>
   state.ingredient.ingredientsCount;
-
+export const selectEditIngredientId = (state: RootState) =>
+  state.ingredient.editIngredientId;
 //default export
 
 export default ingredientSlice.reducer;

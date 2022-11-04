@@ -35,7 +35,7 @@ const RecipeView = () => {
         </h3>
         <div className="max-w-full w-full  max-h-full">
           {
-            loadingState === "pending" &&
+            loadingState === "pendingOne" &&
 
             [{}].map((ingredient, idx) => {
               return (
@@ -103,16 +103,16 @@ const RecipeView = () => {
             })
           }
         </div>
-        {loadingState === "succeeded" && recipe._id === "" && (
+        {loadingState === "succeededOne" && recipe._id === "" && (
           <p>Ingredient not present</p>
         )}
-        {loadingState === "rejected" && <p>Ingredient fetch error</p>}
-        {loadingState === "succeeded" && (
+        {loadingState === "rejectedOne" && <p>Ingredient fetch error</p>}
+        {loadingState === "succeededOne" && (
           <div className="">
             <div className="">
               {/* <p className="break-words">{JSON.stringify(recipe)}</p> */}
               <div className="max-w-full w-full   bg-white border rounded-md border-r border-b border-l border-red-400  max-h-full grid grid-cols-1 lg:grid-cols-2">
-                {recipe && loadingState === "succeeded" && recipe._id && (
+                {recipe && loadingState === "succeededOne" && recipe._id && (
                   <>
                     <div className="lg:h-[500px]  flex-none bg-cover rounded-t  text-center overflow-hidden p-5">
                       <img
@@ -196,7 +196,7 @@ const RecipeView = () => {
                         })}
                       </div>
                       <div className="pr-5 pb-5">
-                        <p className="text-gray-700 text-base whitespace-pre-line">
+                        <p className="text-gray-700 text-base whitespace-pre-line overflow-auto">
                           {recipe.recipeText}
                         </p>
                       </div>
