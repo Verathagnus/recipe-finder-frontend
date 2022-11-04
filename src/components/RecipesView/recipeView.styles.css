@@ -1,0 +1,15 @@
+#excludeSelect .highlightOption{
+    background-color: red;
+}
+
+#excludeSelect .option:hover{
+    background-color: red;
+}
+
+#includeSelect .highlightOption{
+    background-color: teal;
+}
+
+#includeSelect .option:hover{
+    background-color: teal;
+}

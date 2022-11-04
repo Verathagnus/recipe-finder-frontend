@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { IngredientGetBasicType } from "../../types/types";
 import {
@@ -22,16 +22,93 @@ const IngredientsView = () => {
   const ingredientModalHandler = (id: string) => {
     // TODO: ingredient modal
     console.log("Modal Open: Ingredient: ", id);
-    navigate("/ingredients/"+id);
+    navigate("/ingredients/" + id);
   };
   //  className="
   // dark:bg-gray-800"
+  const [searchNameFilter, setSearchNameFilter] = useState("");
+  const [searchCategoryFilter, setSearchCategoryFilter] = useState("");
+  const [filteredIngredients, setFilteredIngredients] = useState(ingredientsList);
+  
+  useEffect(() => {
+    console.log("searchNameFilter", searchNameFilter);
+    console.log("searchCategoryFilter", searchCategoryFilter);
+    console.log(ingredientsList.filter((ingredient) => {
+      return ingredient.category === searchCategoryFilter && ingredient.name.toLocaleLowerCase().includes(searchNameFilter.toLocaleLowerCase());
+    }))
+    setFilteredIngredients(ingredientsList.filter((ingredient) => {
+      return (searchCategoryFilter === "" || ingredient.category === searchCategoryFilter) && ingredient.name.toLocaleLowerCase().includes(searchNameFilter.toLocaleLowerCase());
+    }));
+
+  }, [ingredientsList, searchNameFilter, searchCategoryFilter]);
   return (
     <div>
       <div className="px-10 w-[90%]  mx-auto drop-shadow-lg pb-20 ">
         <h3 className="font-medium text-left leading-tight text-3xl mt-0 mb-2 text-red-600 pt-10">
           Ingredients
         </h3>
+        <div className="bg-white lg:bg-transparent rounded-md border lg:border-none drop-shadow">
+          <div className="sm:max-w-sm p-4 grid sm:grid-flow-col grid-flow-row gap-2">
+            <div className="relative">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="absolute top-0 bottom-0 w-6 h-6 my-auto text-gray-400 left-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              <input
+                type="text"
+                placeholder="Search"
+                className="w-full py-3 pl-12 pr-4 text-gray-500 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-indigo-600 focus:text-gray-700"
+                onChange={(e) => {
+                  setSearchNameFilter(e.target.value);
+                }}
+              />
+            </div>
+            <div>
+              <label className="flex gap-x-2 items-baseline w-auto">
+                <select
+                  className="form-select appearance-none
+        block
+        w-full
+        px-2
+        py-3
+        text-base
+        text-left
+        font-normal
+        text-gray-400
+         bg-clip-padding bg-no-repeat
+        border border-solid border-gray-300
+        rounded
+        transition
+        ease-in-out
+       bg-gray-50 focus:outline-none   pr-10 outline-none   focus:border-indigo-600 focus:text-gray-700"
+                  onChange={(e) => {
+                    setSearchCategoryFilter(e.target.value);
+                  }}
+                >
+                  <option value="" className="text-blue-400  bg-blue-100">
+                    All
+                  </option>
+                  <option value="Non-Veg" className="text-red-400  bg-red-100">
+                    Non-Veg
+                  </option>
+                  <option value="Veg" className="text-teal-400 bg-teal-100">
+                    Veg
+                  </option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
         <div className="grid lg:grid-cols-2 gap-4">
           {loadingState === "pending" &&
             Array(4)
@@ -78,18 +155,18 @@ const IngredientsView = () => {
                 );
               })}
         </div>
-        {loadingState === "succeeded" && ingredientsList.length === 0 && (
+        {loadingState === "succeeded" && filteredIngredients.length === 0 && (
           <p>No ingredients present</p>
         )}
         <div className="grid lg:grid-cols-2 lg:gap-4">
-          {ingredientsList &&
-            ingredientsList.map((ingredient) => {
+          {filteredIngredients &&
+            filteredIngredients.map((ingredient) => {
               return (
                 <Fragment key={ingredient._id}>
                   {/* <p className="break-words">{JSON.stringify(ingredient)}</p> */}
                   <div className="max-w-full sm:max-w-full md:max-w-full w-full lg:max-w-full lg:flex pt-5 ">
                     <div
-                      className="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden cursor-pointer border-t border-l border-r  border-red-400 lg:border-l-1 lg:border-t lg:border-red-400 hover:bg-red-200  lg:border-b "
+                      className="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none text-center overflow-hidden cursor-pointer border-t border-l border-r  border-red-400 lg:border-r-0 lg:border-l  lg:border-t lg:border-red-400 hover:bg-red-200  lg:border-b lg:rounded-r-0 lg:rounded-tl lg:rounded-bl"
                       onClick={() => {
                         ingredientModalHandler(ingredient._id);
                       }}
