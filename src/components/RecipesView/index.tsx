@@ -216,7 +216,7 @@ const RecipesView = () => {
           Recipes
         </h3>
         <div className="bg-white lg:bg-transparent rounded-md border lg:border-none drop-shadow  lg:drop-shadow-none mb-5">
-          <div className="p-4 grid grid-flow-row">
+          <div className="p-4 lg:grid grid-cols-2 gap-4">
             <div className="sm:max-w-sm p-4 grid sm:grid-flow-col grid-flow-row gap-2 ">
               <div className="relative">
                 <svg
@@ -503,7 +503,7 @@ const RecipesView = () => {
                                 <img
                                   className="w-10 h-10 rounded-full mr-4"
                                   src={
-                                    ingredient.attachmentFlag
+                                    ingredient.attachmentFlag && ingredient.uploadedIngredientImage.length>0
                                       ? ingredient.uploadedIngredientImage
                                       : "https://res.cloudinary.com/dxgfvidct/image/upload/v1666940089/empty-ingredients_myiljy.jpg"
                                   }

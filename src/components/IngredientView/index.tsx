@@ -97,7 +97,7 @@ const IngredientView = () => {
                   }}
                   // style="background-image: url('/img/card-left.jpg')"
                   src={
-                    ingredient.attachmentFlag
+                    ingredient.attachmentFlag  && ingredient.uploadedIngredientImage.length>0
                       ? ingredient.uploadedIngredientImage
                       : 'https://res.cloudinary.com/dxgfvidct/image/upload/v1666940089/empty-ingredients_myiljy.jpg'
                   }
