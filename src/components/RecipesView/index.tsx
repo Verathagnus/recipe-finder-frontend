@@ -35,16 +35,16 @@ const RecipesView = () => {
     include: number;
     exclude: number;
   }
-  const [ingredientFilters, setIngredientFilters] = useState<IngredientFilter[]>([
-    { id: "", name: "", include: 0, exclude: 0 },
-  ]);
+  const [ingredientFilters, setIngredientFilters] = useState<
+    IngredientFilter[]
+  >([{ id: "", name: "", include: 0, exclude: 0 }]);
 
   useEffect(() => {
     dispatch(fetchRecipesPopular()).then(() => console.log(recipesList));
     // filterForRecipeThunk()
     dispatch(fetchIngredientsAlphabetical());
   }, []);
-  
+
   useEffect(() => {
     setIngredientFilters(
       ingredientsList.map((ingredient) => {
@@ -145,30 +145,34 @@ const RecipesView = () => {
     selectedItem: IngredientFilter
   ) => {
     setIncludeIngredients(selectedList.map((item) => item.id));
-    console.log(selectedItem)
-    setIngredientFilters(ingredientFilters.map(ingredient => {
-      if(ingredient.id === selectedItem.id)
-      return {
-        ...ingredient,
-        include: 1
-      };
-      return ingredient;
-    }))
+    console.log(selectedItem);
+    setIngredientFilters(
+      ingredientFilters.map((ingredient) => {
+        if (ingredient.id === selectedItem.id)
+          return {
+            ...ingredient,
+            include: 1,
+          };
+        return ingredient;
+      })
+    );
   };
   const onIngredientRemoveInclude = (
     selectedList: Array<IngredientFilter>,
     selectedItem: IngredientFilter
   ) => {
     setIncludeIngredients(selectedList.map((item) => item.id));
-    console.log(selectedItem)
-    setIngredientFilters(ingredientFilters.map(ingredient => {
-      if(ingredient.id === selectedItem.id)
-      return {
-        ...ingredient,
-        include: 0
-      };
-      return ingredient;
-    }))
+    console.log(selectedItem);
+    setIngredientFilters(
+      ingredientFilters.map((ingredient) => {
+        if (ingredient.id === selectedItem.id)
+          return {
+            ...ingredient,
+            include: 0,
+          };
+        return ingredient;
+      })
+    );
   };
 
   const onIngredientSelectExclude = (
@@ -176,30 +180,34 @@ const RecipesView = () => {
     selectedItem: IngredientFilter
   ) => {
     setExcludeIngredients(selectedList.map((item) => item.id));
-    console.log(selectedItem)
-    setIngredientFilters(ingredientFilters.map(ingredient => {
-      if(ingredient.id === selectedItem.id)
-      return {
-        ...ingredient,
-        exclude: 1
-      };
-      return ingredient;
-    }))
+    console.log(selectedItem);
+    setIngredientFilters(
+      ingredientFilters.map((ingredient) => {
+        if (ingredient.id === selectedItem.id)
+          return {
+            ...ingredient,
+            exclude: 1,
+          };
+        return ingredient;
+      })
+    );
   };
   const onIngredientRemoveExclude = (
     selectedList: Array<IngredientFilter>,
     selectedItem: IngredientFilter
   ) => {
     setExcludeIngredients(selectedList.map((item) => item.id));
-    console.log(selectedItem)
-    setIngredientFilters(ingredientFilters.map(ingredient => {
-      if(ingredient.id === selectedItem.id)
-      return {
-        ...ingredient,
-        exclude: 0
-      };
-      return ingredient;
-    }))
+    console.log(selectedItem);
+    setIngredientFilters(
+      ingredientFilters.map((ingredient) => {
+        if (ingredient.id === selectedItem.id)
+          return {
+            ...ingredient,
+            exclude: 0,
+          };
+        return ingredient;
+      })
+    );
   };
   return (
     <>
@@ -209,7 +217,7 @@ const RecipesView = () => {
         </h3>
         <div className="bg-white lg:bg-transparent rounded-md border lg:border-none drop-shadow  lg:drop-shadow-none mb-5">
           <div className="p-4 grid grid-flow-row">
-            <div className="sm:max-w-sm p-4 grid sm:grid-flow-col grid-flow-row gap-2">
+            <div className="sm:max-w-sm p-4 grid sm:grid-flow-col grid-flow-row gap-2 ">
               <div className="relative">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -228,7 +236,7 @@ const RecipesView = () => {
                 <input
                   type="text"
                   placeholder="Search"
-                  className="w-full py-3 pl-12 pr-4 text-gray-500 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-indigo-600 focus:text-gray-700"
+                  className="w-full py-3 pl-12 pr-4 text-gray-500  rounded-md outline-none bg-gray-50 focus:bg-white border border-gray-300 focus:border-indigo-600 focus:text-gray-700 "
                   onChange={(e) => {
                     setSearchNameFilter(e.target.value);
                   }}
@@ -247,7 +255,7 @@ const RecipesView = () => {
         font-normal
         text-gray-400
          bg-clip-padding bg-no-repeat
-        border border-solid border-gray-300
+         border  border-gray-300
         rounded
         transition
         ease-in-out
@@ -273,10 +281,15 @@ const RecipesView = () => {
               </div>
             </div>
             <div className="sm:max-w-sm p-4 grid sm:grid-flow-col grid-flow-row">
+              {/* <div className="rounded-md text-red-600 w-[160px] flex align-middle justify-center items-center">
+                <p className="">Filter by Ingredients</p>
+              </div> */}
               <Multiselect
                 className="px-2 py-1"
                 id="includeSelect"
-                options={ingredientFilters.filter((ingredient) => bitNOR(ingredient.include, ingredient.exclude))}
+                options={ingredientFilters.filter((ingredient) =>
+                  bitNOR(ingredient.include, ingredient.exclude)
+                )}
                 onSelect={(selectedList, selectedItem) =>
                   onIngredientSelectInclude(selectedList, selectedItem)
                 } // Function will trigger on select event
@@ -308,7 +321,9 @@ const RecipesView = () => {
               <Multiselect
                 className="px-2 py-1"
                 id="excludeSelect"
-                options={ingredientFilters.filter((ingredient) => bitNOR(ingredient.include, ingredient.exclude))}
+                options={ingredientFilters.filter((ingredient) =>
+                  bitNOR(ingredient.include, ingredient.exclude)
+                )}
                 style={{
                   chips: {
                     background: "red",
