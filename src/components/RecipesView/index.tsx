@@ -207,7 +207,7 @@ const RecipesView = () => {
         <h3 className="font-medium text-left leading-tight text-3xl mt-0 mb-2 text-red-600 pt-10 ">
           Recipes
         </h3>
-        <div className="bg-white lg:bg-transparent rounded-md border lg:border-none drop-shadow mb-5">
+        <div className="bg-white lg:bg-transparent rounded-md border lg:border-none drop-shadow  lg:drop-shadow-none mb-5">
           <div className="p-4 grid grid-flow-row">
             <div className="sm:max-w-sm p-4 grid sm:grid-flow-col grid-flow-row gap-2">
               <div className="relative">
@@ -272,9 +272,10 @@ const RecipesView = () => {
                 </label>
               </div>
             </div>
-            <div className="sm:max-w-sm p-4 grid sm:grid-flow-col grid-flow-row ">
+            <div className="sm:max-w-sm p-4 grid sm:grid-flow-col grid-flow-row">
               <Multiselect
                 className="px-2 py-1"
+                id="includeSelect"
                 options={ingredientFilters.filter((ingredient) => bitNOR(ingredient.include, ingredient.exclude))}
                 onSelect={(selectedList, selectedItem) =>
                   onIngredientSelectInclude(selectedList, selectedItem)
@@ -302,12 +303,11 @@ const RecipesView = () => {
                     hover: "teal",
                   },
                 }}
-                id="includeSelect"
                 placeholder="Include Ingredients"
               />
               <Multiselect
-                id="excludeSelect"
                 className="px-2 py-1"
+                id="excludeSelect"
                 options={ingredientFilters.filter((ingredient) => bitNOR(ingredient.include, ingredient.exclude))}
                 style={{
                   chips: {
