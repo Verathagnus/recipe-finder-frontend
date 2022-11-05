@@ -29,13 +29,37 @@ const RecipesView = () => {
   const [searchNameFilter, setSearchNameFilter] = useState("");
   const [searchCategoryFilter, setSearchCategoryFilter] = useState("");
   const [filteredRecipes, setFilteredRecipes] = useState(recipesList);
-  
+  interface IngredientFilter {
+    id: string;
+    name: string;
+    include: number;
+    exclude: number;
+  }
+  const [ingredientFilters, setIngredientFilters] = useState<IngredientFilter[]>([
+    { id: "", name: "", include: 0, exclude: 0 },
+  ]);
+
   useEffect(() => {
     dispatch(fetchRecipesPopular()).then(() => console.log(recipesList));
     // filterForRecipeThunk()
     dispatch(fetchIngredientsAlphabetical());
   }, []);
-
+  
+  useEffect(() => {
+    setIngredientFilters(
+      ingredientsList.map((ingredient) => {
+        return {
+          id: ingredient._id,
+          name: ingredient.name,
+          include: 0,
+          exclude: 0,
+        };
+      })
+    );
+  }, [ingredientsList]);
+  const bitNOR = (a: number, b: number) => {
+    return !(a > 0 || b > 0);
+  };
   const navigate = useNavigate();
   const recipeModalHandler = (id: string) => {
     // TODO: ingredient modal
@@ -117,29 +141,65 @@ const RecipesView = () => {
     );
   }, [recipesList, searchNameFilter, searchCategoryFilter]);
   const onIngredientSelectInclude = (
-    selectedList: Array<{ id: string; name: string }>,
-    selectedItem: Object
+    selectedList: Array<IngredientFilter>,
+    selectedItem: IngredientFilter
   ) => {
     setIncludeIngredients(selectedList.map((item) => item.id));
+    console.log(selectedItem)
+    setIngredientFilters(ingredientFilters.map(ingredient => {
+      if(ingredient.id === selectedItem.id)
+      return {
+        ...ingredient,
+        include: 1
+      };
+      return ingredient;
+    }))
   };
   const onIngredientRemoveInclude = (
-    selectedList: Array<{ id: string; name: string }>,
-    selectedItem: Object
+    selectedList: Array<IngredientFilter>,
+    selectedItem: IngredientFilter
   ) => {
     setIncludeIngredients(selectedList.map((item) => item.id));
+    console.log(selectedItem)
+    setIngredientFilters(ingredientFilters.map(ingredient => {
+      if(ingredient.id === selectedItem.id)
+      return {
+        ...ingredient,
+        include: 0
+      };
+      return ingredient;
+    }))
   };
 
   const onIngredientSelectExclude = (
-    selectedList: Array<{ id: string; name: string }>,
-    selectedItem: Object
+    selectedList: Array<IngredientFilter>,
+    selectedItem: IngredientFilter
   ) => {
     setExcludeIngredients(selectedList.map((item) => item.id));
+    console.log(selectedItem)
+    setIngredientFilters(ingredientFilters.map(ingredient => {
+      if(ingredient.id === selectedItem.id)
+      return {
+        ...ingredient,
+        exclude: 1
+      };
+      return ingredient;
+    }))
   };
   const onIngredientRemoveExclude = (
-    selectedList: Array<{ id: string; name: string }>,
-    selectedItem: Object
+    selectedList: Array<IngredientFilter>,
+    selectedItem: IngredientFilter
   ) => {
     setExcludeIngredients(selectedList.map((item) => item.id));
+    console.log(selectedItem)
+    setIngredientFilters(ingredientFilters.map(ingredient => {
+      if(ingredient.id === selectedItem.id)
+      return {
+        ...ingredient,
+        exclude: 0
+      };
+      return ingredient;
+    }))
   };
   return (
     <>
@@ -215,9 +275,7 @@ const RecipesView = () => {
             <div className="sm:max-w-sm p-4 grid sm:grid-flow-col grid-flow-row ">
               <Multiselect
                 className="px-2 py-1"
-                options={ingredientsList.map((ingredient) => {
-                  return { id: ingredient._id, name: ingredient.name };
-                })}
+                options={ingredientFilters.filter((ingredient) => bitNOR(ingredient.include, ingredient.exclude))}
                 onSelect={(selectedList, selectedItem) =>
                   onIngredientSelectInclude(selectedList, selectedItem)
                 } // Function will trigger on select event
@@ -234,8 +292,8 @@ const RecipesView = () => {
                   },
                   searchBox: {
                     border: "none",
-                    "borderBottom": "1px solid teal",
-                    "borderRadius": "0px",
+                    borderBottom: "1px solid teal",
+                    borderRadius: "0px",
                   },
                   optionContainer: {
                     // To change css for option container
@@ -250,9 +308,7 @@ const RecipesView = () => {
               <Multiselect
                 id="excludeSelect"
                 className="px-2 py-1"
-                options={ingredientsList.map((ingredient) => {
-                  return { id: ingredient._id, name: ingredient.name };
-                })}
+                options={ingredientFilters.filter((ingredient) => bitNOR(ingredient.include, ingredient.exclude))}
                 style={{
                   chips: {
                     background: "red",
@@ -263,8 +319,8 @@ const RecipesView = () => {
                   },
                   searchBox: {
                     border: "none",
-                    "borderBottom": "1px solid red",
-                    "borderRadius": "0px",
+                    borderBottom: "1px solid red",
+                    borderRadius: "0px",
                   },
                   optionContainer: {
                     // To change css for option container
