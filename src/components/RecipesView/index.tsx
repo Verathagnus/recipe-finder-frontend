@@ -3,17 +3,19 @@ import React, { Fragment, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getRecipesListAlphabetical } from "../../services/recipeService";
 import { useAppDispatch, useAppSelector } from "../../store";
-import './recipeView.styles.css';
+import "./recipeView.styles.css";
 import {
   fetchIngredientsAlphabetical,
   selectIngredients,
 } from "../../store/ingredient/ingredientSlice";
 import {
   fetchRecipesPopular,
+  filterForRecipeThunk,
   selectLoading,
   selectRecipes,
 } from "../../store/recipe/recipeSlice";
 import { selectLoading as selectLoadingIngredient } from "../../store/ingredient/ingredientSlice";
+import FormData from "form-data";
 
 import { IngredientGetBasicType } from "../../types/types";
 const RecipesView = () => {
@@ -27,12 +29,13 @@ const RecipesView = () => {
   const [searchNameFilter, setSearchNameFilter] = useState("");
   const [searchCategoryFilter, setSearchCategoryFilter] = useState("");
   const [filteredRecipes, setFilteredRecipes] = useState(recipesList);
-
+  
   useEffect(() => {
     dispatch(fetchRecipesPopular()).then(() => console.log(recipesList));
     // filterForRecipeThunk()
     dispatch(fetchIngredientsAlphabetical());
   }, []);
+
   const navigate = useNavigate();
   const recipeModalHandler = (id: string) => {
     // TODO: ingredient modal
@@ -47,9 +50,13 @@ const RecipesView = () => {
   };
 
   useEffect(() => {
-    console.log(includeIngredients, excludeIngredients)
+    console.log(includeIngredients, excludeIngredients);
     //TODO: create exclusive options between include and exclude
-  }, [includeIngredients, excludeIngredients])
+    let formData = new FormData();
+    formData.append("inclusionFilters", includeIngredients);
+    formData.append("exclusionFilters", excludeIngredients);
+    dispatch(filterForRecipeThunk(formData));
+  }, [includeIngredients, excludeIngredients]);
 
   useEffect(() => {
     console.log("searchNameFilter", searchNameFilter);
@@ -207,7 +214,7 @@ const RecipesView = () => {
             </div>
             <div className="sm:max-w-sm p-4 grid sm:grid-flow-col grid-flow-row ">
               <Multiselect
-                className="py-2"
+                className="px-2 py-1"
                 options={ingredientsList.map((ingredient) => {
                   return { id: ingredient._id, name: ingredient.name };
                 })}
@@ -224,49 +231,46 @@ const RecipesView = () => {
                   },
                   multiselectContainer: {
                     color: "teal",
-                    
                   },
                   searchBox: {
                     border: "none",
-                    "border-bottom": "1px solid teal",
-                    "border-radius": "0px",
-                    
+                    "borderBottom": "1px solid teal",
+                    "borderRadius": "0px",
                   },
-                  optionContainer: { // To change css for option container 
+                  optionContainer: {
+                    // To change css for option container
                     border: "2px solid",
-                    background: "white", 
-                    hover:"teal" ,
-                    
+                    background: "white",
+                    hover: "teal",
                   },
                 }}
                 id="includeSelect"
                 placeholder="Include Ingredients"
               />
               <Multiselect
-              id="excludeSelect"
+                id="excludeSelect"
+                className="px-2 py-1"
                 options={ingredientsList.map((ingredient) => {
                   return { id: ingredient._id, name: ingredient.name };
                 })}
                 style={{
                   chips: {
                     background: "red",
-                    color: "white"
+                    color: "white",
                   },
                   multiselectContainer: {
                     color: "red",
-                    
                   },
                   searchBox: {
                     border: "none",
-                    "border-bottom": "1px solid red",
-                    "border-radius": "0px",
-                    
+                    "borderBottom": "1px solid red",
+                    "borderRadius": "0px",
                   },
-                  optionContainer: { // To change css for option container 
+                  optionContainer: {
+                    // To change css for option container
                     border: "2px solid",
-                    background: "white", 
-                    hover:"red" ,
-                    
+                    background: "white",
+                    hover: "red",
                   },
                 }}
                 placeholder="Exclude Ingredients"
@@ -341,12 +345,12 @@ const RecipesView = () => {
                 );
               })}
         </div>
-        {loadingState === "succeeded" && recipesList.length === 0 && (
+        {loadingState === "succeeded" && filteredRecipes.length === 0 && (
           <p>No ingredients present</p>
         )}
         <div className="grid lg:grid-cols-2 gap-4 ">
-          {recipesList &&
-            recipesList.map((recipe) => {
+          {filteredRecipes &&
+            filteredRecipes.map((recipe) => {
               return (
                 <div
                   className="rounded-md border border-red-400"
