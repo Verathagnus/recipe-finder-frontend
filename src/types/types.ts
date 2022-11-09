@@ -55,6 +55,9 @@ export interface IRecipeState {
   recipesCount: number;
   editRecipeId: string;
   recipeTextView: string;
+  page: number;
+  limit: number;
+  count: { totalPages: number; currentPage: number; count: number };
 }
 export interface RecipeGetType {
   _id: string;

@@ -12,7 +12,9 @@ import {
 import {
   fetchRecipesPopular,
   filterForRecipeThunk,
+  selectLimit,
   selectLoading as selectLoadingRecipes,
+  selectPage,
   selectRecipes,
 } from "../../store/recipe/recipeSlice";
 import FormData from "form-data";
@@ -24,9 +26,13 @@ const RecipesPopularView = () => {
   const loadingStateRecipe = useAppSelector(selectLoadingRecipes);
   const [filteredRecipes, setFilteredRecipes] = useState(recipesList);
 
+  // const page = useAppSelector(selectPage);
+  // const limit = useAppSelector(selectLimit);
+
+  
 
   useEffect(() => {
-    dispatch(fetchRecipesPopular()).then(() => console.log(recipesList));
+    dispatch(fetchRecipesPopular({page: 1, limit: 4})).then(() => console.log(recipesList));
   }, []);
 
 

@@ -1,7 +1,7 @@
 import { PlusIcon } from "@heroicons/react/24/solid";
 import React, { useEffect, useState, Fragment } from "react";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { fetchRecipesAlphabetical, selectEditRecipeId, selectRecipes, selectRecipeTextView } from "../../store/recipe/recipeSlice";
+import { fetchRecipesAlphabetical, selectEditRecipeId, selectLimit, selectPage, selectRecipes, selectRecipeTextView, setLimit, setPage } from "../../store/recipe/recipeSlice";
 import { IngredientGetBasicType } from "../../types/types";
 import RecipeEditForm from "./RecipeEditForm";
 import RecipeForm from "./RecipeUploadForm";
@@ -25,8 +25,15 @@ const RecipesAdmin = () => {
   const editRecipeId = useAppSelector(selectEditRecipeId);
   const recipeTextView = useAppSelector(selectRecipeTextView);
   const dispatch = useAppDispatch();
+  const page = useAppSelector(selectPage);
+  const limit = useAppSelector(selectLimit);
+
   useEffect(() => {
-    dispatch(fetchRecipesAlphabetical()).then(() => console.log(recipesList.map(recipe => {
+    dispatch(setPage(1));
+    dispatch(setLimit(Number.MAX_SAFE_INTEGER ));
+  }, [])
+  useEffect(() => {
+    dispatch(fetchRecipesAlphabetical({page, limit})).then(() => console.log(recipesList.map(recipe => {
       return {...recipe, category: recipe.ingredientsRequired.reduce(
         (categoryPrev: string, ingredient: IngredientGetBasicType) => {
           if (ingredient.category === "Non-Veg") {
@@ -37,7 +44,7 @@ const RecipesAdmin = () => {
         "Veg"
       )}
     })));
-  }, []);
+  }, [page, limit]);
   const columns = React.useMemo(
     () => [
       {

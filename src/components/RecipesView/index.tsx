@@ -1,5 +1,5 @@
 import Multiselect from "multiselect-react-dropdown";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getRecipesListAlphabetical } from "../../services/recipeService";
 import { useAppDispatch, useAppSelector } from "../../store";
@@ -9,17 +9,37 @@ import {
   selectIngredients,
 } from "../../store/ingredient/ingredientSlice";
 import {
+  fetchRecipesAlphabetical,
   fetchRecipesPopular,
   filterForRecipeThunk,
+  selectCount,
+  selectLimit,
   selectLoading,
+  selectPage,
   selectRecipes,
+  setLimit,
+  setPage,
 } from "../../store/recipe/recipeSlice";
 import { selectLoading as selectLoadingIngredient } from "../../store/ingredient/ingredientSlice";
 import FormData from "form-data";
 
-import { IngredientGetBasicType } from "../../types/types";
+import { IngredientGetBasicType, RecipeGetType } from "../../types/types";
+import InfiniteScroll from "react-infinite-scroll-component";
 const RecipesView = () => {
+  interface IngredientFilter {
+    id: string;
+    name: string;
+    include: number;
+    exclude: number;
+  }
   const dispatch = useAppDispatch();
+  const page = useAppSelector(selectPage);
+  const limit = useAppSelector(selectLimit);
+  const count = useAppSelector(selectCount);
+
+  useEffect(() => {
+    dispatch(setPage(1));
+  }, []);
   const recipesList = useAppSelector(selectRecipes);
   const loadingState = useAppSelector(selectLoading);
   const ingredientsList = useAppSelector(selectIngredients);
@@ -28,23 +48,41 @@ const RecipesView = () => {
   const [excludeIngredients, setExcludeIngredients] = useState<string[]>([]);
   const [searchNameFilter, setSearchNameFilter] = useState("");
   const [searchCategoryFilter, setSearchCategoryFilter] = useState("");
+  const [recipesListFull, setRecipesListFull] = useState<RecipeGetType[]>([]);
   const [filteredRecipes, setFilteredRecipes] = useState(recipesList);
-  interface IngredientFilter {
-    id: string;
-    name: string;
-    include: number;
-    exclude: number;
-  }
+  const navigate = useNavigate();
+  const [loadedList, setLoadedList] = useState(true);
   const [ingredientFilters, setIngredientFilters] = useState<
     IngredientFilter[]
   >([{ id: "", name: "", include: 0, exclude: 0 }]);
-
   useEffect(() => {
-    dispatch(fetchRecipesPopular()).then(() => console.log(recipesList));
-    // filterForRecipeThunk()
+    // dispatch(fetchRecipesAlphabetical({ page, limit })).then(() =>
+    //   console.log(recipesList)
+    // );
+    // setRecipesListFull([]);
+    // // filterForRecipeThunk()
+    // navigate("/recipes")
+  }, [limit]);
+  useEffect(() => {
+    let formData = new FormData();
+    formData.append("inclusionFilters", includeIngredients);
+    formData.append("exclusionFilters", excludeIngredients);
+    dispatch(filterForRecipeThunk({ formData, page, limit }));
+
     dispatch(fetchIngredientsAlphabetical());
   }, []);
 
+  useEffect(() => {
+    // if(JSON.stringify(recipesListFull.map(recipe => recipe._id)) !== JSON.stringify(recipesListFull.map(recipe => recipe._id)))
+    setRecipesListFull([...recipesListFull, ...recipesList]);
+    console.log("78 => ", recipesListFull, recipesList);
+  }, [recipesList]);
+  // useEffect(() => {
+  //   let formData = new FormData();
+  //   formData.append("inclusionFilters", includeIngredients);
+  //   formData.append("exclusionFilters", excludeIngredients);
+  //   dispatch(filterForRecipeThunk({formData, page, limit}));
+  // }, []);
   useEffect(() => {
     setIngredientFilters(
       ingredientsList.map((ingredient) => {
@@ -57,36 +95,23 @@ const RecipesView = () => {
       })
     );
   }, [ingredientsList]);
-  const bitNOR = (a: number, b: number) => {
-    return !(a > 0 || b > 0);
-  };
-  const navigate = useNavigate();
-  const recipeModalHandler = (id: string) => {
-    // TODO: ingredient modal
-    console.log("Modal Open: Recipe: ", id);
-    navigate("/recipes/" + id);
-  };
 
-  const ingredientModalHandler = (id: string) => {
-    // TODO: ingredient modal
-    console.log("Modal Open: Ingredient: ", id);
-    navigate("/ingredients/" + id);
-  };
+  // useEffect(() => {
+  //   console.log(includeIngredients, excludeIngredients);
+  //   //TODO: create exclusive options between include and exclude
+  //   let formData = new FormData();
+  //   formData.append("inclusionFilters", includeIngredients);
+  //   formData.append("exclusionFilters", excludeIngredients);
+  //   dispatch(setPage)
+  //   dispatch(filterForRecipeThunk({formData, page, limit}));
+
+  // }, [includeIngredients, excludeIngredients]);
 
   useEffect(() => {
-    console.log(includeIngredients, excludeIngredients);
-    //TODO: create exclusive options between include and exclude
-    let formData = new FormData();
-    formData.append("inclusionFilters", includeIngredients);
-    formData.append("exclusionFilters", excludeIngredients);
-    dispatch(filterForRecipeThunk(formData));
-  }, [includeIngredients, excludeIngredients]);
-
-  useEffect(() => {
-    console.log("searchNameFilter", searchNameFilter);
-    console.log("searchCategoryFilter", searchCategoryFilter);
+    // console.log("searchNameFilter", searchNameFilter);
+    // console.log("searchCategoryFilter", searchCategoryFilter);
     console.log(
-      recipesList
+      recipesListFull
         .map((recipe) => {
           return {
             ...recipe,
@@ -114,7 +139,7 @@ const RecipesView = () => {
         })
     );
     setFilteredRecipes(
-      recipesList
+      recipesListFull
         .map((recipe) => {
           return {
             ...recipe,
@@ -139,76 +164,125 @@ const RecipesView = () => {
           );
         })
     );
-  }, [recipesList, searchNameFilter, searchCategoryFilter]);
-  const onIngredientSelectInclude = (
-    selectedList: Array<IngredientFilter>,
-    selectedItem: IngredientFilter
-  ) => {
-    setIncludeIngredients(selectedList.map((item) => item.id));
-    console.log(selectedItem);
-    setIngredientFilters(
-      ingredientFilters.map((ingredient) => {
-        if (ingredient.id === selectedItem.id)
-          return {
-            ...ingredient,
-            include: 1,
-          };
-        return ingredient;
-      })
-    );
+  }, [recipesListFull, searchNameFilter, searchCategoryFilter]);
+  const bitNOR = (a: number, b: number) => {
+    return !(a > 0 || b > 0);
   };
-  const onIngredientRemoveInclude = (
-    selectedList: Array<IngredientFilter>,
-    selectedItem: IngredientFilter
-  ) => {
-    setIncludeIngredients(selectedList.map((item) => item.id));
-    console.log(selectedItem);
-    setIngredientFilters(
-      ingredientFilters.map((ingredient) => {
-        if (ingredient.id === selectedItem.id)
-          return {
-            ...ingredient,
-            include: 0,
-          };
-        return ingredient;
-      })
+  const nextPage = () => {
+    let formData = new FormData();
+    formData.append("inclusionFilters", includeIngredients);
+    formData.append("exclusionFilters", excludeIngredients);
+    dispatch(filterForRecipeThunk({ formData, page: page + 1, limit })).then(
+      () => dispatch(setPage(page + 1))
     );
   };
 
-  const onIngredientSelectExclude = (
+  const changeIngredientFilter = () => {
+    let formData = new FormData();
+    formData.append("inclusionFilters", includeIngredients);
+    formData.append("exclusionFilters", excludeIngredients);
+    setPage(1);
+    dispatch(filterForRecipeThunk({ formData, page: 1, limit }))
+      .then(() => dispatch(setPage(1)))
+      .then(() => setRecipesListFull([]));
+  };
+
+  const changeLimitPerPage = (val: number) => {
+    dispatch(setLimit(val));
+  };
+  const recipeModalHandler = (id: string) => {
+    // TODO: ingredient modal
+    console.log("Modal Open: Recipe: ", id);
+    navigate("/recipes/" + id);
+  };
+
+  const ingredientModalHandler = (id: string) => {
+    // TODO: ingredient modal
+    console.log("Modal Open: Ingredient: ", id);
+    navigate("/ingredients/" + id);
+  };
+  const onIngredientSelectInclude = async (
+    selectedList: Array<IngredientFilter>,
+    selectedItem: IngredientFilter
+  ) => {
+    setIncludeIngredients(selectedList.map((item) => item.id));
+    // console.log(selectedItem);
+    setTimeout(() => {
+      setIngredientFilters(
+        ingredientFilters.map((ingredient) => {
+          if (ingredient.id === selectedItem.id)
+            return {
+              ...ingredient,
+              include: 1,
+            };
+          return ingredient;
+        })
+      );
+      changeIngredientFilter()
+    }, 100);
+  };
+  const onIngredientRemoveInclude = async (
+    selectedList: Array<IngredientFilter>,
+    selectedItem: IngredientFilter
+  ) => {
+    setIncludeIngredients(selectedList.map((item) => item.id));
+    // console.log(selectedItem);
+    setTimeout(() => {
+      setIngredientFilters(
+        ingredientFilters.map((ingredient) => {
+          if (ingredient.id === selectedItem.id)
+            return {
+              ...ingredient,
+              include: 0,
+            };
+          return ingredient;
+        })
+      );
+      changeIngredientFilter()
+    }, 100);
+  };
+
+  const onIngredientSelectExclude = async (
     selectedList: Array<IngredientFilter>,
     selectedItem: IngredientFilter
   ) => {
     setExcludeIngredients(selectedList.map((item) => item.id));
     console.log(selectedItem);
-    setIngredientFilters(
-      ingredientFilters.map((ingredient) => {
-        if (ingredient.id === selectedItem.id)
-          return {
-            ...ingredient,
-            exclude: 1,
-          };
-        return ingredient;
-      })
-    );
+    setTimeout(() => {
+      setIngredientFilters(
+        ingredientFilters.map((ingredient) => {
+          if (ingredient.id === selectedItem.id)
+            return {
+              ...ingredient,
+              exclude: 1,
+            };
+          return ingredient;
+        })
+      );
+      changeIngredientFilter()
+    }, 100);
   };
-  const onIngredientRemoveExclude = (
+  const onIngredientRemoveExclude = async (
     selectedList: Array<IngredientFilter>,
     selectedItem: IngredientFilter
   ) => {
     setExcludeIngredients(selectedList.map((item) => item.id));
     console.log(selectedItem);
-    setIngredientFilters(
-      ingredientFilters.map((ingredient) => {
-        if (ingredient.id === selectedItem.id)
-          return {
-            ...ingredient,
-            exclude: 0,
-          };
-        return ingredient;
-      })
-    );
+    setTimeout(() => {
+      setIngredientFilters(
+        ingredientFilters.map((ingredient) => {
+          if (ingredient.id === selectedItem.id)
+            return {
+              ...ingredient,
+              exclude: 0,
+            };
+          return ingredient;
+        })
+      );
+      changeIngredientFilter()
+    }, 100);
   };
+  console.log(count, recipesListFull.length);
   return (
     <>
       <div className="px-10 w-[90%]  mx-auto drop-shadow-lg pb-20">
@@ -290,12 +364,12 @@ const RecipesView = () => {
                 options={ingredientFilters.filter((ingredient) =>
                   bitNOR(ingredient.include, ingredient.exclude)
                 )}
-                onSelect={(selectedList, selectedItem) =>
-                  onIngredientSelectInclude(selectedList, selectedItem)
-                } // Function will trigger on select event
-                onRemove={(selectedList, selectedItem) =>
-                  onIngredientRemoveInclude(selectedList, selectedItem)
-                } // Function will trigger on remove event
+                onSelect={(selectedList, selectedItem) => {
+                  onIngredientSelectInclude(selectedList, selectedItem);
+                }} // Function will trigger on select event
+                onRemove={(selectedList, selectedItem) => {
+                  onIngredientRemoveInclude(selectedList, selectedItem);
+                }} // Function will trigger on remove event
                 displayValue="name" // Property name to display in the dropdown options
                 style={{
                   chips: {
@@ -419,123 +493,158 @@ const RecipesView = () => {
         {loadingState === "succeeded" && filteredRecipes.length === 0 && (
           <p>No ingredients present</p>
         )}
-        <div className="grid lg:grid-cols-2 gap-4 ">
-          {filteredRecipes &&
-            filteredRecipes.map((recipe) => {
-              return (
-                <div
-                  className="rounded-md border border-red-400"
-                  key={recipe._id}
-                >
-                  {/* <p className="break-words">{JSON.stringify(recipe)}</p> */}
-                  <div className="max-w-full sm:max-w-full md:max-w-full w-full lg:max-w-full lg:flex bg-white  rounded-md hover:bg-red-200  lg:min-h-[280px]">
+        {loadedList && (
+          <InfiniteScroll
+            dataLength={filteredRecipes.length} //This is important field to render the next data
+            next={nextPage}
+            hasMore={count.currentPage < count.totalPages}
+            loader={loadingState !== "succeeded" && <h4>Loading...</h4>}
+            endMessage={
+              <p className="align-middle" style={{ textAlign: "center" }}>
+                <b>No more recipes</b>
+              </p>
+            }
+            // below props only if you need pull down functionality
+            refreshFunction={() => {
+              navigate("/recipes");
+            }}
+            pullDownToRefresh
+            pullDownToRefreshThreshold={50}
+            pullDownToRefreshContent={
+              <h3 style={{ textAlign: "center" }}>
+                &#8595; Pull down to refresh
+              </h3>
+            }
+            releaseToRefreshContent={
+              <h3 style={{ textAlign: "center" }}>
+                &#8593; Release to refresh
+              </h3>
+            }
+          >
+            <div className="grid lg:grid-cols-2 gap-4 ">
+              {filteredRecipes &&
+                filteredRecipes.map((recipe) => {
+                  return (
                     <div
-                      className="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-r-none lg:rounded-l text-center overflow-hidden cursor-pointer"
-                      onClick={() => {
-                        recipeModalHandler(recipe._id);
-                      }}
-                      // style="background-image: url('/img/card-left.jpg')"
-                      style={
-                        recipe.uploadedRecipeImageFlag
-                          ? {
-                              backgroundImage: `url(${recipe.uploadedRecipeImageFileName})`,
-                            }
-                          : {
-                              backgroundImage: `url(https://res.cloudinary.com/dxgfvidct/image/upload/v1666940089/empty-recipe_o3l7qn.jpg)`,
-                            }
-                      }
-                      title={recipe.name}
+                      className="rounded-md border border-red-400"
+                      key={recipe._id}
                     >
-                      {/* <img src={recipe.uploadedRecipeImageFileName}></img> */}
-                    </div>
-                    <div className="  rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal lg:w-[300px] lg:border-l  border-t border-t-yellow-400 lg:border-t-0">
+                      {/* <p className="break-words">{JSON.stringify(recipe)}</p> */}
                       <div
-                        className="mb-5 cursor-pointer"
-                        onClick={() => {
-                          recipeModalHandler(recipe._id);
-                        }}
+                        className="max-w-full sm:max-w-full md:max-w-full w-full lg:max-w-full lg:flex bg-white  rounded-md hover:bg-red-200  
+                  lg:min-h-full"
                       >
-                        <div className="text-sm text-gray-600 flex items-center">
-                          {recipe.ingredientsRequired.reduce(
-                            (categoryPrev: string, ingredient) => {
-                              if (ingredient.category === "Non-Veg") {
-                                return "Non-Veg";
-                              }
-                              return categoryPrev;
-                            },
-                            "Veg"
-                          ) === "Veg" ? (
-                            <p className="text-green-500">Veg</p>
-                          ) : (
-                            <p className="text-red-600">Non-Veg</p>
-                          )}
+                        <div
+                          className="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-r-none lg:rounded-l text-center overflow-hidden cursor-pointer"
+                          onClick={() => {
+                            recipeModalHandler(recipe._id);
+                          }}
+                          // style="background-image: url('/img/card-left.jpg')"
+                          style={
+                            recipe.uploadedRecipeImageFlag
+                              ? {
+                                  backgroundImage: `url(${recipe.uploadedRecipeImageFileName})`,
+                                }
+                              : {
+                                  backgroundImage: `url(https://res.cloudinary.com/dxgfvidct/image/upload/v1666940089/empty-recipe_o3l7qn.jpg)`,
+                                }
+                          }
+                          title={recipe.name}
+                        >
+                          {/* <img src={recipe.uploadedRecipeImageFileName}></img> */}
                         </div>
-                        <div className="text-gray-900 font-bold text-xl whitespace-pre-line overflow-auto">
-                          {recipe.name}
-                        </div>
-                        <p className="text-gray-700 text-base whitespace-pre-line break-all">
-                          {recipe.recipeText.length > 50 ? (
-                            <>
-                              {recipe.recipeText.slice(0, 50)}{" "}
-                              <span className="text-teal-400 hover:text-blue-400">
-                                ... Read More
-                              </span>
-                            </>
-                          ) : (
-                            recipe.recipeText
-                          )}
-                        </p>
-                      </div>
-                      <div className="grid grid-cols-1">
-                        {recipe.ingredientsRequired.map((ingredient) => {
-                          return (
-                            <a
-                              className="hover:bg-yellow-200 rounded-md pl-5 cursor-pointer"
-                              onClick={() => {
-                                ingredientModalHandler(ingredient._id);
-                              }}
-                              key={ingredient._id}
-                            >
-                              <div
-                                className="flex items-center py-2"
-                                key={ingredient._id}
-                              >
-                                <img
-                                  className="w-10 h-10 rounded-full mr-4"
-                                  src={
-                                    ingredient.attachmentFlag && ingredient.uploadedIngredientImage.length>0
-                                      ? ingredient.uploadedIngredientImage
-                                      : "https://res.cloudinary.com/dxgfvidct/image/upload/v1666940089/empty-ingredients_myiljy.jpg"
+                        <div className="  rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal lg:w-[300px] lg:border-l  border-t border-t-yellow-400 lg:border-t-0">
+                          <div
+                            className="mb-5 cursor-pointer"
+                            onClick={() => {
+                              recipeModalHandler(recipe._id);
+                            }}
+                          >
+                            <div className="text-sm text-gray-600 flex items-center">
+                              {recipe.ingredientsRequired.reduce(
+                                (categoryPrev: string, ingredient) => {
+                                  if (ingredient.category === "Non-Veg") {
+                                    return "Non-Veg";
                                   }
-                                  alt={ingredient.name}
-                                />
-                                <div className="text-sm">
-                                  <p className="text-gray-900 leading-none whitespace-pre-line overflow-auto">
-                                    {ingredient.name}
-                                  </p>
-                                  <div className="">
-                                    {ingredient.category === "Veg" ? (
-                                      <p className="text-green-500 font-bold bg-green-100 rounded-full px-3 mt-2">
-                                        Veg
+                                  return categoryPrev;
+                                },
+                                "Veg"
+                              ) === "Veg" ? (
+                                <p className="text-green-500">Veg</p>
+                              ) : (
+                                <p className="text-red-600">Non-Veg</p>
+                              )}
+                            </div>
+                            <div className="text-gray-900 font-bold text-xl whitespace-pre-line overflow-auto">
+                              {recipe.name}
+                            </div>
+                            <p className="text-gray-700 text-base whitespace-pre-line break-all">
+                              {recipe.recipeText.length > 50 ? (
+                                <>
+                                  {recipe.recipeText.slice(0, 50)}{" "}
+                                  <span className="text-teal-400 hover:text-blue-400">
+                                    ... Read More
+                                  </span>
+                                </>
+                              ) : (
+                                recipe.recipeText
+                              )}
+                            </p>
+                          </div>
+                          <div className="grid grid-cols-1">
+                            {recipe.ingredientsRequired.map((ingredient) => {
+                              return (
+                                <a
+                                  className="hover:bg-yellow-200 rounded-md pl-5 cursor-pointer"
+                                  onClick={() => {
+                                    ingredientModalHandler(ingredient._id);
+                                  }}
+                                  key={ingredient._id}
+                                >
+                                  <div
+                                    className="flex items-center py-2"
+                                    key={ingredient._id}
+                                  >
+                                    <img
+                                      className="w-10 h-10 rounded-full mr-4"
+                                      src={
+                                        ingredient.attachmentFlag &&
+                                        ingredient.uploadedIngredientImage
+                                          .length > 0
+                                          ? ingredient.uploadedIngredientImage
+                                          : "https://res.cloudinary.com/dxgfvidct/image/upload/v1666940089/empty-ingredients_myiljy.jpg"
+                                      }
+                                      alt={ingredient.name}
+                                    />
+                                    <div className="text-sm">
+                                      <p className="text-gray-900 leading-none whitespace-pre-line overflow-auto">
+                                        {ingredient.name}
                                       </p>
-                                    ) : (
-                                      <p className="text-red-500 font-bold bg-red-100 rounded-full px-3 mt-2">
-                                        Non-Veg
-                                      </p>
-                                    )}
+                                      <div className="">
+                                        {ingredient.category === "Veg" ? (
+                                          <p className="text-green-500 font-bold bg-green-100 rounded-full px-3 mt-2">
+                                            Veg
+                                          </p>
+                                        ) : (
+                                          <p className="text-red-500 font-bold bg-red-100 rounded-full px-3 mt-2">
+                                            Non-Veg
+                                          </p>
+                                        )}
+                                      </div>
+                                    </div>
                                   </div>
-                                </div>
-                              </div>
-                            </a>
-                          );
-                        })}
+                                </a>
+                              );
+                            })}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              );
-            })}
-        </div>
+                  );
+                })}
+            </div>
+          </InfiniteScroll>
+        )}
       </div>
     </>
   );

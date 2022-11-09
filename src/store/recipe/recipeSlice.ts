@@ -19,8 +19,8 @@ import { IRecipeState, RecipeGetType } from "../../types/types";
 
 export const fetchRecipesPopular = createAsyncThunk(
   "recipe/fetchRecipesPopular",
-  async () => {
-    const res = await getRecipesListPopular();
+  async ({page, limit}: {page: number, limit: number}) => {
+    const res = await getRecipesListPopular(page, limit);
     return res.data;
   }
 );
@@ -35,8 +35,8 @@ export const fetchRecipesLatest = createAsyncThunk(
 
 export const fetchRecipesAlphabetical = createAsyncThunk(
   "recipe/fetchRecipesAlphabetical",
-  async () => {
-    const res = await getRecipesListAlphabetical();
+  async ({page, limit}: {page: number, limit: number}) => {
+    const res = await getRecipesListAlphabetical(page, limit);
     return res.data;
   }
 );
@@ -76,10 +76,10 @@ export const submitRecipeThunk = createAsyncThunk(
 
 export const filterForRecipeThunk = createAsyncThunk(
   "recipe/filterForRecipeThunk",
-  async (newData: FormData, { rejectWithValue }) => {
+  async ({formData, page, limit}: {formData: FormData, page: number, limit: number}, { rejectWithValue }) => {
     try {
       var res;
-      res = await filterForRecipe(newData);
+      res = await filterForRecipe(formData, page, limit);
       return res.data;
     } catch (err) {
       return rejectWithValue("");
@@ -118,6 +118,10 @@ const initialState = {
   recipesCount: 0,
   editRecipeId: "",
   recipeTextView: "",
+  page: 1,
+  limit: 10,
+  count: {totalPages: 1,
+  currentPage: 1, count: 0}
 } as IRecipeState;
 
 const recipeSlice = createSlice({
@@ -132,6 +136,12 @@ const recipeSlice = createSlice({
     },
     setRecipeTextView: (state, action) => {
       state.recipeTextView = action.payload;
+    },
+    setPage: (state, action) => {
+      state.page = action.payload;
+    },
+    setLimit: (state, action) => {
+      state.limit = action.payload;
     },
   },
   extraReducers: (builder: ActionReducerMapBuilder<IRecipeState>) => {
@@ -149,8 +159,9 @@ const recipeSlice = createSlice({
       })
       .addCase(fetchRecipesAlphabetical.fulfilled, (state, action) => {
         state.recipes = action.payload.recipes;
-        state.recipesCount = action.payload.recipes.length;
+        state.recipesCount = action.payload.count;
         state.loading = "succeeded";
+        state.count = {totalPages: action.payload.totalPages, currentPage: action.payload.currentPage, count: action.payload.count}
       })
       .addCase(fetchRecipesAlphabetical.pending, (state, action) => {
         state.loading = "pending";
@@ -162,6 +173,7 @@ const recipeSlice = createSlice({
         state.recipes = action.payload.recipes;
         state.recipesCount = action.payload.recipes.length;
         state.loading = "succeeded";
+        state.count = {totalPages: action.payload.totalPages, currentPage: action.payload.currentPage, count: action.payload.count};
       })
       .addCase(fetchRecipesLatest.pending, (state, action) => {
         state.loading = "pending";
@@ -173,6 +185,7 @@ const recipeSlice = createSlice({
         state.recipes = action.payload.recipes;
         state.recipesCount = action.payload.recipes.length;
         state.loading = "succeeded";
+        state.count = {totalPages: action.payload.totalPages, currentPage: action.payload.currentPage, count: action.payload.count};
       })
       .addCase(filterForRecipeThunk.pending, (state, action) => {
         state.loading = "pending";
@@ -196,13 +209,14 @@ const recipeSlice = createSlice({
       .addCase(deleteRecipeThunk.fulfilled, (state, action) => {
         console.log(action.payload);
         state.recipes = action.payload.recipes;
+        state.count = {totalPages: action.payload.totalPages, currentPage: action.payload.currentPage, count: action.payload.count};
       })
       .addCase(deleteRecipeThunk.rejected, (state, action) => {
         alert("deletion unsuccessful");
       })
       .addCase(submitRecipeThunk.fulfilled, (state, action) => {
         state.recipes = action.payload.recipes;
-        state.recipesCount = action.payload.recipes.length;
+        state.count = {totalPages: action.payload.totalPages, currentPage: action.payload.currentPage, count: action.payload.count}
       })
       .addCase(submitRecipeThunk.rejected, (state, action) => {
         throw new Error("add unsuccessful");
@@ -210,6 +224,7 @@ const recipeSlice = createSlice({
       .addCase(updateRecipeThunk.fulfilled, (state, action) => {
         state.recipes = action.payload.recipes;
         state.recipesCount = action.payload.recipes.length;
+        state.count = {totalPages: action.payload.totalPages, currentPage: action.payload.currentPage, count: action.payload.count}
       })
       .addCase(updateRecipeThunk.rejected, (state, action) => {
         throw new Error("add unsuccessful");
@@ -217,19 +232,28 @@ const recipeSlice = createSlice({
   },
 });
 
-export const { clearRecipeFound, setEditRecipeId, setRecipeTextView } =
-  recipeSlice.actions;
+export const {
+  clearRecipeFound,
+  setEditRecipeId,
+  setRecipeTextView,
+  setPage,
+  setLimit,
+} = recipeSlice.actions;
 
 export const selectRecipes = (state: RootState) => state.recipe.recipes;
 export const selectLoading = (state: RootState) => state.recipe.loading;
 export const selectRecipe = (state: RootState) => state.recipe.recipeFound;
-export const selectRecipeCount = (state: RootState) =>
-  state.recipe.recipesCount;
+export const selectCount = (state: RootState) =>
+  state.recipe.count;
 export const selectEditRecipeId = (state: RootState) =>
   state.recipe.editRecipeId;
 
-  export const selectRecipeTextView = (state: RootState) =>
+export const selectRecipeTextView = (state: RootState) =>
   state.recipe.recipeTextView;
-//default export
 
+export const selectPage = (state: RootState) => state.recipe.page;
+
+export const selectLimit = (state: RootState) => state.recipe.limit;
+
+//default export
 export default recipeSlice.reducer;

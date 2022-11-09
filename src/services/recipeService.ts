@@ -1,20 +1,29 @@
 import axios, { AxiosResponse } from "axios";
- 
+
 const VITE_SERVERURL = import.meta.env.VITE_SERVERURL;
 import FormData from "form-data";
 const baseUrl = `${VITE_SERVERURL}/api/recipes`;
- 
+
 export function getRecipesListLatest() {
   return axios.get(baseUrl + "/get-all-recipes-latest");
 }
 
-export function getRecipesListPopular() {
-  return axios.get(baseUrl + "/get-all-recipes-popular");
+export function getRecipesListPopular(page: number, limit: number) {
+  return axios.get(baseUrl + "/get-all-recipes-popular", {
+    params: {
+      page: page,
+      limit: limit,
+    },
+  });
 }
 
-
-export function getRecipesListAlphabetical() {
-  return axios.get(baseUrl + "/get-all-recipes-alphabetical");
+export function getRecipesListAlphabetical(page: number, limit: number) {
+  return axios.get(baseUrl + "/get-all-recipes-alphabetical", {
+    params: {
+      page: page,
+      limit: limit,
+    },
+  });
 }
 
 export function getRecipeImageUploadSign() {
@@ -29,16 +38,24 @@ export function getRecipe(id: string) {
   return axios.get(baseUrl + "/get-recipe-by-id/" + id);
 }
 
-export function filterForRecipe(formData: FormData) {
+export function filterForRecipe(
+  formData: FormData,
+  page: number,
+  limit: number
+) {
   return axios.post(baseUrl + "/get-recipe-by-filters", formData, {
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+    },
+    params: {
+      page: page,
+      limit: limit,
     },
   });
 }
 
 export function createRecipe(formData: FormData) {
-  console.log(formData)
+  console.log(formData);
   return axios.post(baseUrl + "/upload-recipe", formData, {
     headers: {
       "Content-Type": "application/json",
