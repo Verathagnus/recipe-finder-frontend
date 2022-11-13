@@ -74,8 +74,15 @@ const RecipesView = () => {
 
   useEffect(() => {
     // if(JSON.stringify(recipesListFull.map(recipe => recipe._id)) !== JSON.stringify(recipesListFull.map(recipe => recipe._id)))
-    setRecipesListFull([...recipesListFull, ...recipesList]);
-    console.log("78 => ", recipesListFull, recipesList);
+    new Promise((res) => {
+      setRecipesListFull([...recipesListFull, ...recipesList]);
+      if (page === 1) {
+        setRecipesListFull(recipesList);
+      } else setRecipesListFull([...recipesListFull, ...recipesList]);
+      res(true);
+    }).then(() => {
+      console.log("78 => ", recipesListFull, recipesList);
+    });
   }, [recipesList]);
   // useEffect(() => {
   //   let formData = new FormData();
@@ -110,7 +117,10 @@ const RecipesView = () => {
   useEffect(() => {
     // console.log("searchNameFilter", searchNameFilter);
     // console.log("searchCategoryFilter", searchCategoryFilter);
+    // setLoadedList(false);
     console.log(
+      "113 =>",
+      recipesListFull,
       recipesListFull
         .map((recipe) => {
           return {
@@ -164,27 +174,49 @@ const RecipesView = () => {
           );
         })
     );
+    // setTimeout(() => {
+    //   setLoadedList(true);
+    // }, 100);
   }, [recipesListFull, searchNameFilter, searchCategoryFilter]);
+  // 0 0 => 1 0
+  // 0 1 => 0 1
+  // 1 0 => 0 1
+  // 1 1 => 0 1
   const bitNOR = (a: number, b: number) => {
     return !(a > 0 || b > 0);
   };
+  // console.log(
+  //   "L175 => NOR",
+  //   ingredientFilters.filter((ingredient) =>
+  //     bitNOR(ingredient.exclude, ingredient.include)
+  //   )
+  // );
   const nextPage = () => {
-    let formData = new FormData();
-    formData.append("inclusionFilters", includeIngredients);
-    formData.append("exclusionFilters", excludeIngredients);
-    dispatch(filterForRecipeThunk({ formData, page: page + 1, limit })).then(
-      () => dispatch(setPage(page + 1))
-    );
+    if (count.currentPage < count.totalPages) {
+      let formData = new FormData();
+      formData.append("inclusionFilters", includeIngredients);
+      formData.append("exclusionFilters", excludeIngredients);
+      new Promise((res) => {
+        dispatch(setPage(page + 1));
+        res(true);
+      }).then(() =>
+        dispatch(filterForRecipeThunk({ formData, page: page + 1, limit }))
+      );
+    }
   };
 
-  const changeIngredientFilter = () => {
+  const changeIngredientFilter = async (
+    includeIngredientsList: string[] = includeIngredients,
+    excludeIngredientsList: string[] = excludeIngredients
+  ) => {
+    console.log(includeIngredientsList, excludeIngredientsList);
     let formData = new FormData();
-    formData.append("inclusionFilters", includeIngredients);
-    formData.append("exclusionFilters", excludeIngredients);
+    formData.append("inclusionFilters", includeIngredientsList);
+    formData.append("exclusionFilters", excludeIngredientsList);
     setPage(1);
-    dispatch(filterForRecipeThunk({ formData, page: 1, limit }))
-      .then(() => dispatch(setPage(1)))
-      .then(() => setRecipesListFull([]));
+    dispatch(filterForRecipeThunk({ formData, page: 1, limit })).then(() =>
+      dispatch(setPage(1))
+    );
   };
 
   const changeLimitPerPage = (val: number) => {
@@ -205,84 +237,110 @@ const RecipesView = () => {
     selectedList: Array<IngredientFilter>,
     selectedItem: IngredientFilter
   ) => {
-    setIncludeIngredients(selectedList.map((item) => item.id));
-    // console.log(selectedItem);
-    setTimeout(() => {
-      setIngredientFilters(
-        ingredientFilters.map((ingredient) => {
-          if (ingredient.id === selectedItem.id)
-            return {
-              ...ingredient,
-              include: 1,
-            };
-          return ingredient;
-        })
+    new Promise((resolve) => {
+      setIncludeIngredients(selectedList.map((item) => item.id));
+
+      resolve(1);
+    })
+      .then(() => {
+        console.log(includeIngredients);
+      })
+      .then(() =>
+        changeIngredientFilter(
+          selectedList.map((item) => item.id),
+          excludeIngredients
+        )
       );
-      changeIngredientFilter()
-    }, 100);
+    setIngredientFilters(
+      ingredientFilters.map((ingredient) => {
+        if (ingredient.id === selectedItem.id)
+          return {
+            ...ingredient,
+            include: 1,
+          };
+        return ingredient;
+      })
+    );
   };
   const onIngredientRemoveInclude = async (
     selectedList: Array<IngredientFilter>,
     selectedItem: IngredientFilter
   ) => {
-    setIncludeIngredients(selectedList.map((item) => item.id));
-    // console.log(selectedItem);
-    setTimeout(() => {
-      setIngredientFilters(
-        ingredientFilters.map((ingredient) => {
-          if (ingredient.id === selectedItem.id)
-            return {
-              ...ingredient,
-              include: 0,
-            };
-          return ingredient;
-        })
-      );
-      changeIngredientFilter()
-    }, 100);
+    new Promise((resolve) => {
+      setIncludeIngredients(selectedList.map((item) => item.id));
+      resolve(1);
+    })
+      .then(() =>
+        changeIngredientFilter(
+          selectedList.map((item) => item.id),
+          excludeIngredients
+        )
+      )
+      .then(() => console.log("233"));
+    setIngredientFilters(
+      ingredientFilters.map((ingredient) => {
+        if (ingredient.id === selectedItem.id)
+          return {
+            ...ingredient,
+            include: 0,
+          };
+        return ingredient;
+      })
+    );
+    console.log(includeIngredients, excludeIngredients);
   };
 
   const onIngredientSelectExclude = async (
     selectedList: Array<IngredientFilter>,
     selectedItem: IngredientFilter
   ) => {
-    setExcludeIngredients(selectedList.map((item) => item.id));
-    console.log(selectedItem);
-    setTimeout(() => {
-      setIngredientFilters(
-        ingredientFilters.map((ingredient) => {
-          if (ingredient.id === selectedItem.id)
-            return {
-              ...ingredient,
-              exclude: 1,
-            };
-          return ingredient;
-        })
-      );
-      changeIngredientFilter()
-    }, 100);
+    new Promise((resolve) => {
+      setExcludeIngredients(selectedList.map((item) => item.id));
+      resolve(1);
+    }).then(() =>
+      changeIngredientFilter(
+        includeIngredients,
+        selectedList.map((item) => item.id)
+      )
+    );
+
+    setIngredientFilters(
+      ingredientFilters.map((ingredient) => {
+        if (ingredient.id === selectedItem.id)
+          return {
+            ...ingredient,
+            exclude: 1,
+          };
+        return ingredient;
+      })
+    );
   };
   const onIngredientRemoveExclude = async (
     selectedList: Array<IngredientFilter>,
     selectedItem: IngredientFilter
   ) => {
-    setExcludeIngredients(selectedList.map((item) => item.id));
+    new Promise((resolve) => {
+      setExcludeIngredients(selectedList.map((item) => item.id));
+      resolve(1);
+    }).then(() =>
+      changeIngredientFilter(
+        includeIngredients,
+        selectedList.map((item) => item.id)
+      )
+    );
     console.log(selectedItem);
-    setTimeout(() => {
-      setIngredientFilters(
-        ingredientFilters.map((ingredient) => {
-          if (ingredient.id === selectedItem.id)
-            return {
-              ...ingredient,
-              exclude: 0,
-            };
-          return ingredient;
-        })
-      );
-      changeIngredientFilter()
-    }, 100);
+    setIngredientFilters(
+      ingredientFilters.map((ingredient) => {
+        if (ingredient.id === selectedItem.id)
+          return {
+            ...ingredient,
+            exclude: 0,
+          };
+        return ingredient;
+      })
+    );
   };
-  console.log(count, recipesListFull.length);
+  console.log(" 317 => ", count, recipesListFull.length, recipesList.length);
   return (
     <>
       <div className="px-10 w-[90%]  mx-auto drop-shadow-lg pb-20">
@@ -295,7 +353,7 @@ const RecipesView = () => {
               <div className="relative">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="absolute top-0 bottom-0 w-6 h-6 my-auto text-gray-400 left-3"
+                  className="absolute top-3.5 w-6 h-6 my-auto text-gray-400 left-3"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -396,7 +454,7 @@ const RecipesView = () => {
                 className="px-2 py-1"
                 id="excludeSelect"
                 options={ingredientFilters.filter((ingredient) =>
-                  bitNOR(ingredient.include, ingredient.exclude)
+                  bitNOR(ingredient.exclude, ingredient.include)
                 )}
                 style={{
                   chips: {
@@ -491,18 +549,68 @@ const RecipesView = () => {
               })}
         </div>
         {loadingState === "succeeded" && filteredRecipes.length === 0 && (
-          <p>No ingredients present</p>
+          <p>No recipes present</p>
         )}
         {loadedList && (
           <InfiniteScroll
             dataLength={filteredRecipes.length} //This is important field to render the next data
             next={nextPage}
-            hasMore={count.currentPage < count.totalPages}
+            hasMore={
+              count.totalPages === 1 || count.currentPage < count.totalPages
+            }
             loader={loadingState !== "succeeded" && <h4>Loading...</h4>}
             endMessage={
-              <p className="align-middle" style={{ textAlign: "center" }}>
-                <b>No more recipes</b>
-              </p>
+              <div className="flex flex-col">
+                <p
+                  className="align-middle mt-10 flex justify-center gap-2"
+                  style={{ textAlign: "center" }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 my-auto text-slate-800 left-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                  <b>No more recipes</b>
+                </p>
+                <>
+                  <button
+                    onClick={() =>
+                      window.scrollTo({
+                        top: 0,
+                        behavior: "smooth",
+                      })
+                    }
+                    className="mt-3 px-6
+                        py-2.5
+                        bg-red-600
+                        text-white
+                        font-medium
+                        text-xs
+                        leading-tight
+                        uppercase
+                        rounded
+                        shadow-md
+                        hover:bg-red-800 hover:shadow-lg
+                        focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0
+                        active:bg-red-800 active:shadow-lg
+                        transition
+                        duration-150
+                        ease-in-out
+                        ml-auto mr-auto"
+                  >
+                    Search Again
+                  </button>
+                </>
+              </div>
             }
             // below props only if you need pull down functionality
             refreshFunction={() => {
