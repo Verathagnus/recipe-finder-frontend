@@ -37,7 +37,12 @@ const RecipesView = () => {
   const limit = useAppSelector(selectLimit);
   const count = useAppSelector(selectCount);
 
+  function onlyUnique(value: any, index: number, self: any) {
+    return self.map((i: any) => JSON.stringify(i)).indexOf(JSON.stringify(value)) === index;
+  }
+
   useEffect(() => {
+    dispatch(setLimit(Number.MAX_SAFE_INTEGER ));
     dispatch(setPage(1));
   }, []);
   const recipesList = useAppSelector(selectRecipes);
@@ -67,7 +72,7 @@ const RecipesView = () => {
     let formData = new FormData();
     formData.append("inclusionFilters", includeIngredients);
     formData.append("exclusionFilters", excludeIngredients);
-    dispatch(filterForRecipeThunk({ formData, page, limit }));
+    dispatch(filterForRecipeThunk({ formData, page, limit: Number.MAX_SAFE_INTEGER }));
 
     dispatch(fetchIngredientsAlphabetical());
   }, []);
@@ -146,7 +151,7 @@ const RecipesView = () => {
                 .toLocaleLowerCase()
                 .includes(searchNameFilter.toLocaleLowerCase()))
           );
-        })
+        }).filter(onlyUnique)
     );
     setFilteredRecipes(
       recipesListFull
@@ -173,6 +178,7 @@ const RecipesView = () => {
               .includes(searchNameFilter.toLocaleLowerCase())
           );
         })
+        .filter(onlyUnique)
     );
     // setTimeout(() => {
     //   setLoadedList(true);
@@ -213,10 +219,12 @@ const RecipesView = () => {
     let formData = new FormData();
     formData.append("inclusionFilters", includeIngredientsList);
     formData.append("exclusionFilters", excludeIngredientsList);
-    setPage(1);
-    dispatch(filterForRecipeThunk({ formData, page: 1, limit })).then(() =>
-      dispatch(setPage(1))
-    );
+    new Promise((res) => {
+      setPage(1);
+      res(true);
+    }).then(() => {
+      dispatch(filterForRecipeThunk({ formData, page: 1, limit }));
+    })
   };
 
   const changeLimitPerPage = (val: number) => {
@@ -552,83 +560,7 @@ const RecipesView = () => {
           <p>No recipes present</p>
         )}
         {loadedList && (
-          <InfiniteScroll
-            dataLength={filteredRecipes.length} //This is important field to render the next data
-            next={nextPage}
-            hasMore={
-              count.totalPages === 1 || count.currentPage < count.totalPages
-            }
-            loader={loadingState !== "succeeded" && <h4>Loading...</h4>}
-            endMessage={
-              <div className="flex flex-col">
-                <p
-                  className="align-middle mt-10 flex justify-center gap-2"
-                  style={{ textAlign: "center" }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6 my-auto text-slate-800 left-3"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                  <b>No more recipes</b>
-                </p>
-                <>
-                  <button
-                    onClick={() =>
-                      window.scrollTo({
-                        top: 0,
-                        behavior: "smooth",
-                      })
-                    }
-                    className="mt-3 px-6
-                        py-2.5
-                        bg-red-600
-                        text-white
-                        font-medium
-                        text-xs
-                        leading-tight
-                        uppercase
-                        rounded
-                        shadow-md
-                        hover:bg-red-800 hover:shadow-lg
-                        focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0
-                        active:bg-red-800 active:shadow-lg
-                        transition
-                        duration-150
-                        ease-in-out
-                        ml-auto mr-auto"
-                  >
-                    Search Again
-                  </button>
-                </>
-              </div>
-            }
-            // below props only if you need pull down functionality
-            refreshFunction={() => {
-              navigate("/recipes");
-            }}
-            pullDownToRefresh
-            pullDownToRefreshThreshold={50}
-            pullDownToRefreshContent={
-              <h3 style={{ textAlign: "center" }}>
-                &#8595; Pull down to refresh
-              </h3>
-            }
-            releaseToRefreshContent={
-              <h3 style={{ textAlign: "center" }}>
-                &#8593; Release to refresh
-              </h3>
-            }
-          >
+          
             <div className="grid lg:grid-cols-2 gap-4 ">
               {filteredRecipes &&
                 filteredRecipes.map((recipe) => {
@@ -751,7 +683,7 @@ const RecipesView = () => {
                   );
                 })}
             </div>
-          </InfiniteScroll>
+          
         )}
       </div>
     </>
@@ -759,3 +691,81 @@ const RecipesView = () => {
 };
 
 export default RecipesView;
+{/* <InfiniteScroll
+            dataLength={filteredRecipes.length} //This is important field to render the next data
+            next={nextPage}
+            hasMore={
+              count.totalPages === 1 || count.currentPage < count.totalPages
+            }
+            loader={loadingState !== "succeeded" && <h4>Loading...</h4>}
+            endMessage={
+              <div className="flex flex-col">
+                <p
+                  className="align-middle mt-10 flex justify-center gap-2"
+                  style={{ textAlign: "center" }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 my-auto text-slate-800 left-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                  <b>No more recipes</b>
+                </p>
+                <>
+                  <button
+                    onClick={() =>
+                      window.scrollTo({
+                        top: 0,
+                        behavior: "smooth",
+                      })
+                    }
+                    className="mt-3 px-6
+                        py-2.5
+                        bg-red-600
+                        text-white
+                        font-medium
+                        text-xs
+                        leading-tight
+                        uppercase
+                        rounded
+                        shadow-md
+                        hover:bg-red-800 hover:shadow-lg
+                        focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0
+                        active:bg-red-800 active:shadow-lg
+                        transition
+                        duration-150
+                        ease-in-out
+                        ml-auto mr-auto"
+                  >
+                    Search Again
+                  </button>
+                </>
+              </div>
+            }
+            // below props only if you need pull down functionality
+            refreshFunction={() => {
+              navigate("/recipes");
+            }}
+            pullDownToRefresh
+            pullDownToRefreshThreshold={50}
+            pullDownToRefreshContent={
+              <h3 style={{ textAlign: "center" }}>
+                &#8595; Pull down to refresh
+              </h3>
+            }
+            releaseToRefreshContent={
+              <h3 style={{ textAlign: "center" }}>
+                &#8593; Release to refresh
+              </h3>
+            }
+          >
+          </InfiniteScroll> */}
