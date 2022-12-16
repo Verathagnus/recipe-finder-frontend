@@ -1,1 +1,1 @@
-# React-TS app for Recipe Finder Frontend
+# Recipe Finder Frontend
